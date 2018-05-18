@@ -62,7 +62,7 @@ class Producer_Of_ImageDataQueue_And_consumer_Of_imageNameQueue(multiprocessing.
         self.imageNameQueue = imageNameQueue
         self.imageDataQueue = imageDataQueue
         self.paramDict = json.loads(paramDictJsonStr)
-        self.urlFlag = True
+        self.urlFlag = False 
         self.threadName = threadName
         self.imageName_lock = imageName_lock
         self.imageData_lock = imageData_lock
@@ -329,8 +329,8 @@ def main():
     param_dict['labelFileName'] = os.path.join(
         args.modelBasePath, args.labelFileName)
     param_dict['gpuId'] = int(args.gpu_id)
-    param_dict['imagSize'] = 320  # the image size into the model
-    param_dict['imageDataProducerCount'] = 4  # one gpu, "urlProducerCount" get url data process
+    param_dict['imagSize'] = 224  # the image size into the model
+    param_dict['imageDataProducerCount'] = 8s  # one gpu, "urlProducerCount" get url data process
     # param_dict['urlFlag'] = True
     param_dict_JsonStr = json.dumps(param_dict)
     print(param_dict)

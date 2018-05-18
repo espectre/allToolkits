@@ -6,6 +6,7 @@
 import numpy as np
 import sys
 import os
+import copy
 import cv2
 sys.path.insert(
     0, "/workspace/data/BK/refineDet-Dir/RefineDet/python")
@@ -176,9 +177,11 @@ def merge_two_bbox_list(list_a=None,list_b=None):
     return "%s\t%s" % (image_name, json.dumps(final_list))
 
 color_dict = dict()
+ori_save_base_path = "/workspace/data/BK/process-mp4/test-data/ori-dir"
+
 def visualize_Fun(image_id,origim, bbox_list):
     global color_dict
-    im = origim
+    im = copy.deepcopy(origim)
     color_black = (0, 0, 0)
     # color = (random.randint(0, 256), random.randint(
     #     0, 256), random.randint(0, 256))
@@ -193,11 +196,54 @@ def visualize_Fun(image_id,origim, bbox_list):
             color_bbox = (random.randint(0, 256), random.randint(
                 0, 256), random.randint(0, 256))
             color_dict[cls_name] = color_bbox
+        # ger ori region
+        ori_im = origim[bbox[0][1]:bbox[2][1], bbox[0][0]:bbox[2][0]]
+        ori_image_name = os.path.join(
+            ori_save_base_path, image_id[:image_id.rfind('-')].split('.')[0], cls_name)
+        if not os.path.exists(ori_image_name):
+            os.makedirs(ori_image_name)  # folder name
+        ori_bbox_name = image_id[image_id.rfind(
+            '-')+1:] + "-"+str(int(time.time()))+".jpg"
+        ori_image_name_bbox_name = os.path.join(ori_image_name, ori_bbox_name)
+        cv2.imwrite(ori_image_name_bbox_name, ori_im)
+        # ger ori region over
         cv2.rectangle(im, (bbox[0][0], bbox[0][1]), (bbox[2][0],
                                                      bbox[2][1]), color=color_bbox, thickness=3)
         cv2.putText(im, '%s %.3f' % (cls_name, score),
-                    (bbox[0][0], bbox[0][1] + 15), color=color_black, fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=0.5)
+                    (bbox[0][0], bbox[0][1] + 15), color=color_black, fontFace=cv2.FONT_HERSHEY_COMPLEX, fontScale=0.5)   
     return im
+
+
+def process_one_batch_inference(refinede_coco_class=None, refinede_face_class=None, oriImage_list=None, image_name_list=None, write_file_op=None):
+    # print("begin process one batch")
+    if refinede_coco_class == None:
+        coco_write_list = None
+        coco_vis_list = None
+    else:
+        coco_write_list, coco_vis_list = refinede_coco_class.inference(
+            oriImage_list, image_name_list)
+    if refinede_face_class == None:
+        face_write_list = None
+        face_vis_list = None
+    else:
+        face_write_list, face_vis_list = refinede_face_class.inference(
+            oriImage_list, image_name_list)
+    for index in range(len(oriImage_list)):
+        if coco_write_list == None:
+            coco_res = None
+        else:
+            coco_res = coco_write_list[index]
+        if face_write_list == None:
+            face_res = None
+        else:
+            face_res = face_write_list[index]
+        finale_res_line = merge_two_bbox_list(coco_res, face_res)
+        write_file_op.write(finale_res_line)
+        write_file_op.write('\n')
+        write_file_op.flush()
+        res_image = visualize_Fun(image_name_list[index],
+                                  oriImage_list[index], json.loads(finale_res_line.split('\t')[-1]))
+        return res_image
 def processVideo(refinede_coco_class=None, refinede_face_class=None, videoPath=None):
     print("videoPath is %s" % (videoPath))
     cap = cv2.VideoCapture(videoPath)
@@ -209,106 +255,56 @@ def processVideo(refinede_coco_class=None, refinede_face_class=None, videoPath=N
     frame_length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     print("frame_length : %d"%(frame_length))
     fourcc = cv2.VideoWriter_fourcc(*'X264')
-    output_video_path = None
+    output_video_path_name = None
     write_file = None
     time_str = time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime())
-    if '.' in os.path.basename(videoPath):
-        output_video_path = videoPath[:videoPath.rfind(
-            '.')]+'-'+time_str+'-detect.mp4'
-        write_file = videoPath[:videoPath.rfind('.')]+'-'+time_str+'-detect.json'
-    else:
-        output_video_path = videoPath+'-'+time_str+'-detect.mp4'
-        write_file = videoPath+'-'+time_str+'-detect.json'
+    videoFileName_Flag_list = os.path.basename(videoPath).split('.')
+    if len(videoFileName_Flag_list) != 2:
+        print("ERROR : %s" % (videoFileName_Flag_list))
+    output_video_name = videoFileName_Flag_list[0] + \
+        '-'+time_str+'-detect.'+videoFileName_Flag_list[-1]
+    output_video_path_name = os.path.join(
+        os.path.dirname(videoPath), output_video_name)
+    write_file = os.path.join(os.path.dirname(
+        videoPath), videoFileName_Flag_list[0]+'-'+time_str+'-detect.json')
     write_file_op = open(write_file,'w')
     vwrite = cv2.VideoWriter(
-        output_video_path, fourcc, fps, size)
+        output_video_path_name, fourcc, fps, size)
     success, img = cap.read()
     count = 1
     oriImage_list = []
     time_list = []
     while (success):
-        time_list.append(count)
+        time_list.append("%s-%s" % (os.path.basename(videoPath),str(count)))
         oriImage_list.append(img)
-        if len(oriImage_list) == process_mp4_config.refinedet_config['modelParam']['batch_size']:
-            if refinede_coco_class == None:
-                coco_write_list = None
-                coco_vis_list = None
-            else:
-                t_1 = time.time()
-                coco_write_list, coco_vis_list = refinede_coco_class.inference(oriImage_list, time_list)
-                t_2 = time.time()
-                print("one frame time : %f"%(t_2-t_1))
-            if refinede_face_class == None:
-                face_write_list = None
-                face_vis_list = None
-            else:
-                face_write_list, face_vis_list = refinede_face_class.inference(oriImage_list, time_list)
-            for index in range(len(oriImage_list)):
-                if coco_write_list == None:
-                    coco_res = None
-                else:
-                    coco_res = coco_write_list[index]
-                if face_write_list == None:
-                    face_res = None
-                else:
-                    face_res = face_write_list[index]
-                finale_res_line = merge_two_bbox_list(coco_res, face_res)
-                write_file_op.write(finale_res_line)
-                write_file_op.write('\n')
-                write_file_op.flush()
-                res_image = visualize_Fun(time_list[index],
-                    oriImage_list[index], json.loads(finale_res_line.split('\t')[-1]))
-                vwrite.write(res_image)
+        if len(oriImage_list) == process_mp4_config.refinedet_config['modelParam']['batch_size']: 
+            result_image_with_bbox = process_one_batch_inference(refinede_coco_class=refinede_coco_class, refinede_face_class=refinede_face_class, oriImage_list=oriImage_list, image_name_list=time_list, write_file_op=write_file_op)
+            for i_image_with_bbox in result_image_with_bbox:
+                vwrite.write(i_image_with_bbox)
             oriImage_list =[]
             time_list = []
         success, img = cap.read()
         count += 1
     if len(oriImage_list) != 0:
         print("begin process the last one batch")
-        if refinede_coco_class == None:
-            coco_write_list = None
-            coco_vis_list = None
-        else:
-            coco_write_list, coco_vis_list = refinede_coco_class.inference(
-                oriImage_list, time_list)
-        if refinede_face_class == None:
-            face_write_list = None
-            face_vis_list = None
-        else:
-            face_write_list, face_vis_list = refinede_face_class.inference(
-                oriImage_list, time_list)
-        for index in range(len(oriImage_list)):
-            if coco_write_list == None:
-                coco_res = None
-            else:
-                coco_res = coco_write_list[index]
-            if face_write_list == None:
-                face_res = None
-            else:
-                face_res = face_write_list[index]
-            finale_res_line = merge_two_bbox_list(coco_res, face_res)
-            write_file_op.write(finale_res_line)
-            write_file_op.write('\n')
-            write_file_op.flush()
-            res_image = visualize_Fun(
-                oriImage_list[index], json.loads(finale_res_line.split('\t')[-1]))
-            vwrite.write(res_image)
+        result_image_with_bbox = process_one_batch_inference(refinede_coco_class=refinede_coco_class, refinede_face_class=refinede_face_class, oriImage_list=oriImage_list, image_name_list=time_list, write_file_op=write_file_op)
+        for i_image_with_bbox in result_image_with_bbox:
+            vwrite.write(i_image_with_bbox)
     print("the final count is : %d"%(count))
     cap.release()
     vwrite.release()
-    return output_video_path
+    return output_video_path_name
 
 def getAllVideoFilePath(basePath=None):
     file_list = []
     for i in os.listdir(basePath):
-        if i.endswith(".mp4") and "detect" not in i:
+        if (i.endswith(".mp4") or i.endswith(".avi"))and "detect" not in i:
             file_list.append(os.path.join(basePath,i))
     return file_list
 
 def initModel_refinedet():
     config = process_mp4_config.refinedet_config
-    if args.fileOrFolderFlag == 1:
-        config['gpuId'] = args.gpuId
+    config['gpuId'] = args.gpuId
     caffe.set_mode_gpu()
     caffe.set_device(config['gpuId'])
     deployName = config['modelParam']['deploy']
@@ -362,7 +358,9 @@ def initModel_faceDetect():
     return res_dict
 
 def post_process_result_video(video_file=None):
-    output_file = video_file[:video_file.rfind('.mp4')]+'-changed.mp4'
+    videoFileName_Flag_list = os.path.basename(video_file).split('.')
+    output_file = os.path.join(os.path.dirname(
+        video_file), videoFileName_Flag_list[0]+'-changed.'+videoFileName_Flag_list[-1])
     cmdStr = "ffmpeg -i %s %s" % (video_file, output_file)
     os.system(cmdStr)
     pass
@@ -383,6 +381,7 @@ def main():
         print("begin process file : %s"%(i_file))
         result_video_file = processVideo(refinede_coco_class,
                      refinede_face_class, videoPath=i_file)
+        print(result_video_file)
         post_process_result_video(video_file=result_video_file)
     pass
 if __name__ == '__main__':
