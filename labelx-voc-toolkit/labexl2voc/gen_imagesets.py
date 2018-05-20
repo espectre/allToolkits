@@ -70,11 +70,15 @@ def gen_imagesets(vocpath=None):
     readme_dict['test_num'] = len(test_list)
     # statistic bbox info
     all_readme_dict['imageInfo'] = readme_dict
-    all_readme_dict['bboxInfo'] = statisticBboxInfo(
-        imagelistFile=_IMAGE_SETS_PATH, xmlFileBasePath=_XML_FILE_PATH)
+    bboxInfo_dict = dict()
+    bboxInfo_dict['trainval_bbox_info'] = statisticBboxInfo(
+        imagelistFile=os.path.join(_MAin_PATH, 'trainval.txt'), xmlFileBasePath=_XML_FILE_PATH)
+    bboxInfo_dict['trainval_bbox_info'] = statisticBboxInfo(
+        imagelistFile=os.path.join(_MAin_PATH, 'test.txt'), xmlFileBasePath=_XML_FILE_PATH)
+    all_readme_dict['bboxInfo'] = bboxInfo_dict
     readme_file = os.path.join(vocpath,'readme.txt')
     with open(readme_file,'w') as f:
-        json.dump(readme_dict, f, indent=4)
+        json.dump(all_readme_dict, f, indent=4)
 
 def statisticBboxInfo(imagelistFile=None,xmlFileBasePath=None,printFlag=True):
     """
