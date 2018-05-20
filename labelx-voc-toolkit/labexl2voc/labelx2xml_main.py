@@ -53,6 +53,11 @@ def parse_args():
                         default=None,
                         help='labelx annotation file base path',
                         type=str)
+    parser.add_argument('--renamePrefix',
+                        dest='renamePrefix',
+                        default=None,
+                        help='rename image : new file prefix',
+                        type=str)
 
     args = parser.parse_args()
     return args
@@ -72,7 +77,7 @@ def main():
         if vocpath == None:
             vocpath = labelxBasePath+'-vocResult'
         labelx2xml_helper.covertLabelxMulFilsToVoc_Fun(
-            labelxPath=labelxBasePath, vocResultPath=vocpath)
+            labelxPath=labelxBasePath, vocResultPath=vocpath, renamePrefix=args.renamePrefix)
         pass
     elif args.actionFlag == 2:
         vocpath = args.vocpath
@@ -114,3 +119,11 @@ if __name__ == '__main__':
     else:
         print("RUN SUCCESS")
 
+
+changeLog = \
+"""
+    2018-05-19: 
+        gen_imagesets : add rename image 
+        gen_imagesets : bbox info add to readme.txt
+        add utils file ,the file is common used function
+"""

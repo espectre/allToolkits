@@ -9,21 +9,33 @@ import  gen_imagesets
 import image_helper
 import xml_helper
 import labelxJson_helper
+import utils
 import cv2
 
 
-def process_labelx_jsonFile_Fun(json_file_absolutePath=None, tempSaveDir=None, vocpath=None):
+def process_labelx_jsonFile_Fun(json_file_absolutePath=None, tempSaveDir=None, vocpath=None,renamePrefix=None):
     # 下载 对应的image,保存下载的图片到 vocpath+'/JPEGImages'
     image_helper.downloadImage_By_urllist(labelxjson=json_file_absolutePath, tempSaveDir=tempSaveDir, vocpath=vocpath)
     # 将 labelx 标注的数据 转换 pascal voc xml 文件
     # 对待下载失败的图片，添加处理方式
     xml_helper.convertLabelxJsonListToXmlFile(
         jsonlistFile=json_file_absolutePath, datasetBasePath=vocpath)
+    # rename imame and xml file
+    filePrefix = renamePrefix
+    if not filePrefix:
+        filePrefix  = "Terror-detect-"+utils.getTimeFlag(flag=1)+"-"
+    res, resInfo = gen_imagesets.renamePascalImageDataSet(
+        vocpath=vocpath, filePrefix=filePrefix)
+    if not res:
+        print(resInfo)
+        resInfo = "rename pascal image error"
+        return (False, resInfo)
     # 这个是生成 pascal voc 格式的数据集 xml  jpg txt
     gen_imagesets.gen_imagesets(vocpath=vocpath)
     pass
 
-def covertLabelxMulFilsToVoc_Fun(labelxPath=None,vocResultPath=None):
+
+def covertLabelxMulFilsToVoc_Fun(labelxPath=None, vocResultPath=None, renamePrefix=None):
     """
         将指定目录下的所有打标过的json 文件转换成 pascal xml 格式数据
     """
@@ -39,13 +51,11 @@ def covertLabelxMulFilsToVoc_Fun(labelxPath=None,vocResultPath=None):
         inputDir=inputDir, tempSaveDir=tempSaveDir)
     # 2 : 根据整合生成的一个总文件，开始下载图片，生成 xml 文件
     process_labelx_jsonFile_Fun(
-        json_file_absolutePath=finalOneFile, tempSaveDir=tempSaveDir, vocpath=vocpath)
+        json_file_absolutePath=finalOneFile, tempSaveDir=tempSaveDir, vocpath=vocpath, renamePrefix=None)
     pass
 
 
-def getFileCountInDir(dirPath=None):
-    file_list = [i for i in os.listdir(dirPath) if i[0] != '.' and os.path.isfile(os.path.join(dirPath, i))]
-    return [len(file_list), sorted(file_list)]
+
 
 
 def mergePascalDataset(littlePath=None, finalPath=None):
@@ -60,10 +70,10 @@ def mergePascalDataset(littlePath=None, finalPath=None):
     # merge image and merge xml
     littlePath_image = os.path.join(littlePath, 'JPEGImages')
     finalPath_image = os.path.join(finalPath, 'JPEGImages')
-    littlePath_image_count = getFileCountInDir(littlePath_image)[0]
+    littlePath_image_count = utils.getFileCountInDir(littlePath_image)[0]
     littlePath_xml = os.path.join(littlePath, 'Annotations')
     finalPath_xml = os.path.join(finalPath, 'Annotations')
-    littlePath_xml_count = getFileCountInDir(littlePath_xml)[0]
+    littlePath_xml_count = utils.getFileCountInDir(littlePath_xml)[0]
     if littlePath_image_count != littlePath_xml_count:
         print("ERROR : %s JPEGImages-nums unequals Annotations-nums" %(littlePath))
         return "error"
@@ -88,7 +98,7 @@ def mergePascalDataset(littlePath=None, finalPath=None):
     # merge txt file
     littlePath_main = os.path.join(littlePath, 'ImageSets', 'Main')
     finalPath_main = os.path.join(finalPath, 'ImageSets', 'Main')
-    textFile_list = getFileCountInDir(dirPath=littlePath_main)[1]
+    textFile_list = utils.getFileCountInDir(dirPath=littlePath_main)[1]
     for i in textFile_list:
         little_file = os.path.join(littlePath_main,i)
         final_file = os.path.join(finalPath_main, i)

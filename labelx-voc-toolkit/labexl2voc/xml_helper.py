@@ -161,12 +161,23 @@ def convertToInt_str(input):
         output = input
     return str(output)
 
-def renameFileName(xmlFileName=None,newFileName=None):
-    root = etree.parse(xmlFileName).getroot()
-    imageName = newFileName.split('/')[-1].split('.')[0]+'.jpg'
-    rootElememt = root
-    rootElememt.find('filename').text = imageName
-    writeXmlFile(root=rootElememt, xmlFileName=newFileName)
+def renameFileNameElement(xmlFileName=None,newFileNameElement=None):
+    '''
+        chanage : annotation.filename 
+    '''
+    try:
+        root = etree.parse(xmlFileName).getroot()
+        rootElememt = root
+        rootElememt.find('filename').text = newFileNameElement
+        writeXmlFile(root=rootElememt, xmlFileName=xmlFileName)
+    except :
+        errorInfo = "renameFileNameElement eror : xml : %s ,newFileNameElement : %s" % (
+            xmlFileName, newFileNameElement)
+        print(errorInfo)
+        return (False, errorInfo)
+    else:
+        return(True,"success")
+    
 
 
 def createXmlFileByLabelXJsonList(labelxJsonLine=None, basePath=None):

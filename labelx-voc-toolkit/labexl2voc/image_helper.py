@@ -27,6 +27,15 @@ def downloadImage_By_urllist(labelxjson=None, tempSaveDir=None, vocpath=None):
     # wgetImageFromUrl(urlFile=justUrlListFile, saveBasePath=imageSaveDir)
     wgetImageFromUrl_MulThread(
         urlFile=justUrlListFile, saveBasePath=imageSaveDir)
+    # md5 process image file and rename file
+    pass
+
+"""
+需要添加 对图片的重新命名，和 对图片的 md5 去重
+"""
+def renameImage(imgesFolderPath=None,renamePrefix=None):
+    
+    pass
 
 # wget images
 def wgetImageFromUrl(urlFile=None, saveBasePath=None):
@@ -87,6 +96,9 @@ def wgetImageFromUrl_MulThread(urlFile=None, saveBasePath=None):
     logErOp.close()
 
     pass
+
+def checkImageReadAndChannel(imageFolder=None,logErOp = None):
+
 
 
 class prod_worker(threading.Thread):
@@ -162,29 +174,6 @@ class cons_worker(threading.Thread):
         GLOBAL_LOCK.release()
 
 
-def readImage_fun(isUrlFlag=None, imagePath=None):
-    """
-        isUrlFlag == True , then read image from url
-        isUrlFlag == False , then read image from local path
-    """
-    im = None
-    if isUrlFlag == True:
-        try:
-            data = urllib.urlopen(imagePath.strip()).read()
-            nparr = np.fromstring(data, np.uint8)
-            if nparr.shape[0] < 1:
-                im = None
-        except:
-            im = None
-        else:
-            im = cv2.imdecode(nparr, 1)
-        finally:
-            return im
-    else:
-        im = cv2.imread(imagePath, cv2.IMREAD_COLOR)
-    if np.shape(im) == ():
-        return None
-    return im
 
 
 
