@@ -8,7 +8,7 @@ import labelx2xml_helper
 helpInfoStr = \
 """
     labelx convert to pascal voc xml file toolkit   
-    actionFlag : 功能 flag
+    --actionFlag : 功能 flag
         1 : 将指定目录下的所有打标过的json 文件转换成 pascal xml 格式数据
             --labelxBasePath ,required
             --vocpath , optional
@@ -26,6 +26,13 @@ helpInfoStr = \
         5 : 抽样画图，抽样画 pascal voc 格式的数据
             --vocpath ,required
             会 将画的图 保存在 vocpath+'-draw' 目录下。
+"""
+changeLog = \
+"""
+    2018-05-19: 
+        gen_imagesets : add rename image 
+        gen_imagesets : bbox info add to readme.txt
+        add utils file ,the file is common used function
 """
 
 def parse_args():
@@ -120,10 +127,4 @@ if __name__ == '__main__':
         print("RUN SUCCESS")
 
 
-changeLog = \
-"""
-    2018-05-19: 
-        gen_imagesets : add rename image 
-        gen_imagesets : bbox info add to readme.txt
-        add utils file ,the file is common used function
-"""
+

@@ -97,10 +97,6 @@ def wgetImageFromUrl_MulThread(urlFile=None, saveBasePath=None):
 
     pass
 
-def checkImageReadAndChannel(imageFolder=None,logErOp = None):
-
-
-
 class prod_worker(threading.Thread):
     """
     producing worker
