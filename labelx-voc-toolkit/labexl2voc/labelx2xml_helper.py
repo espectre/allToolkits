@@ -51,7 +51,7 @@ def covertLabelxMulFilsToVoc_Fun(labelxPath=None, vocResultPath=None, renamePref
         inputDir=inputDir, tempSaveDir=tempSaveDir)
     # 2 : 根据整合生成的一个总文件，开始下载图片，生成 xml 文件
     process_labelx_jsonFile_Fun(
-        json_file_absolutePath=finalOneFile, tempSaveDir=tempSaveDir, vocpath=vocpath, renamePrefix=None)
+        json_file_absolutePath=finalOneFile, tempSaveDir=tempSaveDir, vocpath=vocpath, renamePrefix=renamePrefix)
     pass
 
 
@@ -130,7 +130,7 @@ def mergePascalDataset(littlePath=None, finalPath=None):
             if key == "date":
                 final_imageInfo_dict[key] = getTimeFlag()
             if key == "dataInfo":
-                for i in little_readme_file_dict[key]:
+                for i in little_imageInfo_dict[key]:
                     final_imageInfo_dict[key].append(i)
             if key == "author":
                 final_imageInfo_dict[key] = 'Ben'
@@ -143,7 +143,10 @@ def mergePascalDataset(littlePath=None, finalPath=None):
             if isinstance(final_bboxInfo_dict[i_key],dict):
                 for i_i_key in final_bboxInfo_dict[i_key].keys():
                     if isinstance(final_bboxInfo_dict[i_key][i_i_key],int):
-                        final_bboxInfo_dict[i_key][i_i_key] += little_bboxInfo_dict[i_key][i_i_key]
+                        if i_i_key in little_bboxInfo_dict[i_key]:
+                            final_bboxInfo_dict[i_key][i_i_key] += little_bboxInfo_dict[i_key][i_i_key]
+                        else:
+                            final_bboxInfo_dict[i_key][i_i_key] += 0
         with open(final_readme_file,'w') as f:
             json.dump(final_readme_file_dict, f, indent=4)
     pass
