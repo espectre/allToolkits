@@ -114,14 +114,15 @@ def renamePascalImageDataSet(vocpath=None,filePrefix=None):
     if not filePrefix:
         print("filePrefix is None")
         return (False, "filePrefix is None")
-    _IMAGE_SETS_PATH = join(vocpath, 'ImageSets')
+    _IMAGE_File_PATH = join(vocpath, 'JPEGImages')
     _XML_FILE_PATH = join(vocpath, 'Annotations')
-    if (not os.path.exists(_IMAGE_SETS_PATH))or(not os.path.exists(_XML_FILE_PATH)):
-        infoStr = "%s or %s not exits" % (_IMAGE_SETS_PATH, _XML_FILE_PATH)
+    if (not os.path.exists(_IMAGE_File_PATH))or(not os.path.exists(_XML_FILE_PATH)):
+        infoStr = "%s or %s not exits" % (_IMAGE_File_PATH, _XML_FILE_PATH)
         print(infoStr)
         return (False,infoStr)
-    imageCount, imageName_list = utils.getFileCountInDir(dirPath=_IMAGE_SETS_PATH)
-    xmlCount, xmlName_list = utils.getFileCountInDir(dirPath=_IMAGE_SETS_PATH)
+    imageCount, imageName_list = utils.getFileCountInDir(
+        dirPath=_IMAGE_File_PATH)
+    xmlCount, xmlName_list = utils.getFileCountInDir(dirPath=_IMAGE_File_PATH)
     if imageCount != xmlCount:
         infoStr = "ERROR : image count : %d , xml count : %d"%(imageCount,xmlCount)
         print(infoStr)
@@ -140,7 +141,7 @@ def renamePascalImageDataSet(vocpath=None,filePrefix=None):
             print(infoStr)
             return (False,infoStr)
         newImageName = filePrefix+"-"+str(newNameIndex).rjust(8,'0')+'.jpg'
-        newImageAbsoName = os.path.join(_IMAGE_SETS_PATH, newImageName)
+        newImageAbsoName = os.path.join(_IMAGE_File_PATH, newImageName)
         newXmlName = filePrefix+"-"+str(newNameIndex).rjust(8, '0')+'.xml'
         newXmlAbsoName = os.path.join(_XML_FILE_PATH, newXmlName)
         res,resInfo = renameOneImage(oldImageName=oldImageName, newImageName=newImageAbsoName,
