@@ -121,8 +121,8 @@ def renamePascalImageDataSet(vocpath=None,filePrefix=None):
         print(infoStr)
         return (False,infoStr)
     imageCount, imageName_list = utils.getFileCountInDir(
-        dirPath=_IMAGE_File_PATH)
-    xmlCount, xmlName_list = utils.getFileCountInDir(dirPath=_IMAGE_File_PATH)
+        dirPath=_IMAGE_File_PATH,flag=1)
+    xmlCount, xmlName_list = utils.getFileCountInDir(dirPath=_IMAGE_File_PATH,flag=1)
     if imageCount != xmlCount:
         infoStr = "ERROR : image count : %d , xml count : %d"%(imageCount,xmlCount)
         print(infoStr)

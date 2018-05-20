@@ -31,10 +31,15 @@ def getTimeFlag(flag=0):
 
 
 
-def getFileCountInDir(dirPath=None):
-    file_list = [i for i in os.listdir(
-        dirPath) if i[0] != '.' and os.path.isfile(os.path.join(dirPath, i))]
-    return [len(file_list), sorted(file_list)]
+def getFileCountInDir(dirPath=None,flag=0):
+    if flag == 0: # return file list : element just file name
+        file_list = [i for i in os.listdir(dirPath) if i[0] != '.' and os.path.isfile(os.path.join(dirPath, i))]
+        return [len(file_list), sorted(file_list)]
+    elif flag == 1: # return file list : element is absolute file path
+        file_list = [os.path.join(dirPath, i) for i in os.listdir(
+            dirPath) if i[0] != '.' and os.path.isfile(os.path.join(dirPath, i))]
+        return [len(file_list), sorted(file_list)]
+    pass
 
 
 def parseFileNameFun(fileName=None):
