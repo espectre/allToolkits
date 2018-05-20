@@ -73,7 +73,7 @@ def gen_imagesets(vocpath=None):
     bboxInfo_dict = dict()
     bboxInfo_dict['trainval_bbox_info'] = statisticBboxInfo(
         imagelistFile=os.path.join(_MAin_PATH, 'trainval.txt'), xmlFileBasePath=_XML_FILE_PATH)
-    bboxInfo_dict['trainval_bbox_info'] = statisticBboxInfo(
+    bboxInfo_dict['test_bbox_info'] = statisticBboxInfo(
         imagelistFile=os.path.join(_MAin_PATH, 'test.txt'), xmlFileBasePath=_XML_FILE_PATH)
     all_readme_dict['bboxInfo'] = bboxInfo_dict
     readme_file = os.path.join(vocpath,'readme.txt')
