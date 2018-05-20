@@ -124,17 +124,26 @@ def mergePascalDataset(littlePath=None, finalPath=None):
             return 'error'
     else:
         final_readme_file_dict = json.load(open(final_readme_file, 'r'))
-        for key in final_readme_file_dict.keys():
+        final_imageInfo_dict = final_readme_file_dict['imageInfo']
+        little_imageInfo_dict = little_readme_file_dict['imageInfo']
+        for key in final_imageInfo_dict.keys():
             if key == "date":
-                final_readme_file_dict[key] = getTimeFlag()
+                final_imageInfo_dict[key] = getTimeFlag()
             if key == "dataInfo":
                 for i in little_readme_file_dict[key]:
-                    final_readme_file_dict[key].append(i)
+                    final_imageInfo_dict[key].append(i)
             if key == "author":
-                final_readme_file_dict[key] = 'Ben'
+                final_imageInfo_dict[key] = 'Ben'
             elif key in ['total_num', 'trainval_num', 'test_num']:
-                final_readme_file_dict[key] = final_readme_file_dict[key] + \
-                    little_readme_file_dict[key]
+                final_imageInfo_dict[key] = final_imageInfo_dict[key] + \
+                    little_imageInfo_dict[key]
+        final_bboxInfo_dict = final_readme_file_dict['bboxInfo']
+        little_bboxInfo_dict = little_readme_file_dict['bboxInfo']
+        for i_key in final_bboxInfo_dict.keys():
+            if isinstance(final_bboxInfo_dict[i_key],dict):
+                for i_i_key in final_bboxInfo_dict[i_key].keys():
+                    if isinstance(final_bboxInfo_dict[i_key][i_i_key],int):
+                        final_bboxInfo_dict[i_key][i_i_key] += little_bboxInfo_dict[i_key][i_i_key]
         with open(final_readme_file,'w') as f:
             json.dump(final_readme_file_dict, f, indent=4)
     pass

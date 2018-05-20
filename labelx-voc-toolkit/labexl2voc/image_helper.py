@@ -30,13 +30,6 @@ def downloadImage_By_urllist(labelxjson=None, tempSaveDir=None, vocpath=None):
     # md5 process image file and rename file
     pass
 
-"""
-需要添加 对图片的重新命名，和 对图片的 md5 去重
-"""
-def renameImage(imgesFolderPath=None,renamePrefix=None):
-    
-    pass
-
 # wget images
 def wgetImageFromUrl(urlFile=None, saveBasePath=None):
     logFile = urlFile+'-wget.log'
