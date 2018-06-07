@@ -7,10 +7,12 @@ import traceback
 import numpy as np
 import caffe
 import cv2
+import hashlib
 from evals.utils import create_net_handler, net_preprocess_handler, net_inference_handler, CTX, \
     monitor_rt_load, monitor_rt_forward, monitor_rt_post
 from evals.utils.error import *
 from evals.utils.image import load_image
+import random
 
 
 @create_net_handler
@@ -18,8 +20,8 @@ def create_net(configs):
 
     CTX.logger.info("load configs: %s", configs)
     caffe.set_mode_gpu()
-    deploy  = str(configs['model_files']["deploy.prototxt"])
-    weight = str(configs['model_files']["model_refinedet"])
+    deploy = str(configs['model_files']["deploy.prototxt"])
+    weight = str(configs['model_files']["weight.caffemodel"])
 
     net = caffe.Net(deploy, weight, caffe.TEST)
     if 'custom_params' in configs:
@@ -28,7 +30,9 @@ def create_net(configs):
             thresholds = custom_params['thresholds']
         else:
             thresholds = [0, 0.1, 0.1, 0.1, 0.1, 0.1, 1.0]
-    return {"net": net, "thresholds": thresholds, "batch_size": configs['batch_size']}, ''
+    else:
+        thresholds = [0, 0.1, 0.1, 0.1, 0.1, 0.1, 1.0]
+    return {"net": net, "thresholds": thresholds, "batch_size": configs['batch_size']}, 0, ''
 
 
 @net_preprocess_handler
@@ -36,23 +40,24 @@ def net_preprocess(model, req):
     CTX.logger.info("PreProcess...")
     return req, 0, ''
 
+
 @net_inference_handler
 def net_inference(model, reqs):
-
     net = model["net"]
     thresholds = model["thresholds"]
     batch_size = model['batch_size']
     CTX.logger.info("inference begin ...")
     try:
-        image_shape_list_h_w,images = pre_eval(net, batch_size, reqs)
-        output = eval(net, image_shape_list_h_w, images)
+        image_shape_list_h_w, images = pre_eval(net, batch_size, reqs)
+        output = eval(net, images)
         ret = post_eval(output, thresholds, image_shape_list_h_w)
     except ErrorBase as e:
         return [], e.code, str(e)
     except Exception as e:
         CTX.logger.error("inference error: %s", traceback.format_exc())
         return [], 599, str(e)
-    return ret, ''
+    return ret, 0, ''
+
 
 def preProcessImage(oriImage=None):
     img = cv2.resize(oriImage, (320, 320))
@@ -78,6 +83,7 @@ def pre_eval(net, batch_size, reqs):
         message: error message, string
     '''
     cur_batchsize = len(reqs)
+    CTX.logger.info("cur_batchsize: %d\n", cur_batchsize)
     if cur_batchsize > batch_size:
         for i in range(cur_batchsize):
             raise ErrorOutOfBatchSize(batch_size)
@@ -85,11 +91,12 @@ def pre_eval(net, batch_size, reqs):
     images = []
     _t1 = time.time()
     for i in range(cur_batchsize):
-        img = load_image(reqs[i]["data"]["uri"])
+        data = reqs[i]
+        img = load_image(data["data"]["uri"], body=data['data']['body'])
+        if img is None:
+            CTX.logger.info("input data is none : %s\n", data)
+            raise ErrorBase(400, "image data is None ")
         height, width, _ = img.shape
-        if height <= 32 or width <= 32:
-            raise ErrorBase(400, "image too small " +
-                            str(height) + "x" + str(width))
         if img.ndim != 3:
             raise ErrorBase(400, "image ndim is " +
                             str(img.ndim) + ", should be 3")
@@ -99,6 +106,7 @@ def pre_eval(net, batch_size, reqs):
     CTX.logger.info("read image and transform: %f\n", _t2 - _t1)
     monitor_rt_load().observe(_t2 - _t1)
     return image_shape_list_h_w, images
+
 
 """
 item {
@@ -161,15 +169,16 @@ def post_eval(output, thresholds, image_shape_list_h_w):
     resps = []
     cur_batchsize = len(image_shape_list_h_w)
     _t1 = time.time()
-    output_bbox_list = output['detection_out'][0][0]  # output_bbox_list : bbox_count * 7
-    image_result_dict = dict() # image_id : bbox_list
+    # output_bbox_list : bbox_count * 7
+    output_bbox_list = output['detection_out'][0][0]
+    image_result_dict = dict()  # image_id : bbox_list
     for i_bbox in output_bbox_list:
         image_id = int(i_bbox[0])
         if image_id >= cur_batchsize:
             break
         h = image_shape_list_h_w[image_id][0]
         w = image_shape_list_h_w[image_id][1]
-        class_index = int(i_bbox[1]) 
+        class_index = int(i_bbox[1])
         # [background,guns,knives,tibetan flag,islamic flag,isis flag,not terror]
         if class_index < 1 or class_index >= 6:
             continue
@@ -231,8 +240,57 @@ def eval(net, images):
     CTX.logger.info("forward: %f\n", _t2 - _t1)
     monitor_rt_forward().observe(_t2 - _t1)
 
-    CTX.logger.info('detection_out: {}'.format(output['detection_out']))
+    # CTX.logger.info('detection_out: {}'.format(output['detection_out']))
 
     if 'detection_out' not in output or len(output['detection_out']) < 1:
         raise ErrorForwardInference()
     return output
+
+
+def generate_body(imgPath=None):
+    import base64
+    with open(imgPath, 'rb') as f:
+        image_data = f.read()
+        base64_data = base64.b64encode(image_data)    # 使用 base64 编码
+    return base64_data
+
+
+def main():
+    configs = {
+        "model_files": {
+            "deploy.prototxt": "/workspace/serving/python/evals/models/deploy.prototxt",
+            "weight.caffemodel": "/workspace/serving/python/evals/models/weight.caffemodel"
+        },
+        # "custom_params":{
+        #     "threshold": [0, 0.1, 0.1, 0.1, 0.1, 0.1, 1.0]
+        # },
+        'batch_size': 16
+    }
+    model, _, _ = create_net(configs)
+    image_list = []
+    image_list_file = "/workspace/serving/python/evals/data/test_image_list.list"
+    with open(image_list_file, 'r') as f:
+        image_list = [i.strip() for i in f.readlines() if i.strip()]
+    random_size = random.randint(1, 16)
+    temp_reqs = []
+    for i in image_list:
+        if len(temp_reqs) < random_size:
+            data = dict()
+            data['uri'] = i
+            # data['uri'] = None
+            # data['body'] = generate_body(imgPath=i)
+            data['body'] = None
+            req = dict()
+            req['data'] = data
+            temp_reqs.append(req)
+        else:
+            result = net_inference(model, temp_reqs)
+            for i_result in result[0]:
+                print(i_result['result']['detections'])
+            temp_reqs = []
+            random_size = random.randint(1, 16)
+    pass
+
+
+if __name__ == '__main__':
+    main()

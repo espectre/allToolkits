@@ -330,7 +330,7 @@ def main():
         args.modelBasePath, args.labelFileName)
     param_dict['gpuId'] = int(args.gpu_id)
     param_dict['imagSize'] = 224  # the image size into the model
-    param_dict['imageDataProducerCount'] = 8s  # one gpu, "urlProducerCount" get url data process
+    param_dict['imageDataProducerCount'] = 8  # one gpu, "urlProducerCount" get url data process
     # param_dict['urlFlag'] = True
     param_dict_JsonStr = json.dumps(param_dict)
     print(param_dict)

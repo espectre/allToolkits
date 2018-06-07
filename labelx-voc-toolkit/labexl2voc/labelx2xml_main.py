@@ -12,6 +12,7 @@ helpInfoStr = \
         1 : 将指定目录下的所有打标过的json 文件转换成 pascal xml 格式数据
             --labelxBasePath ,required
             --vocpath , optional
+            --renamePrefix , optional # 用于 rename file 的前缀
         2 : 将一个 pascal voc 数据集 添加到 另外一个数据集中
             --vocpath ,required 
             --finalVocpath , required

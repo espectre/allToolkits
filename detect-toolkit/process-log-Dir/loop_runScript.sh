@@ -3,10 +3,10 @@
 set -x
 if [ ! -n "$1" ]
 then
-    echo "must input file path"
+    echo "must input a date eg: 20180427"
     exit
 else
-    echo "the input file is : "$1
+    echo "the input date is : "$1
 fi
 N=1000
 bash_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -59,6 +59,15 @@ check_Sl()
     # fi
     # return 1
 }
+# add kill process
+kill_process_fun()
+{
+    process_name_flag=$1
+    for process_id in `ps auxww | grep  $process_name_flag| grep -v grep |grep -v defunct |awk '$8=="Sl"{print}'|awk '{print $2}'`;
+    do
+        kill -9 $process_id;
+    done
+}
 jobFlag=0
 checkFlag=0
 while [ $jobFlag -lt $N ]; do
@@ -78,7 +87,8 @@ while [ $jobFlag -lt $N ]; do
 	elif [ $a -eq $b ];then
 		checkFlag=$[checkFlag+1]
 		if [ $checkFlag -gt 5 ];then
-			pkill -9 python
+			#pkill -9 python # debug
+			kill_process_fun mp_refindeDet-res18-inference-demo.py
 			checkFlag=0
 		else
 			sleep 60
