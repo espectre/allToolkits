@@ -16,12 +16,12 @@ import merge_layer_config as layer_config
 MERGE_LAYER_DICT_CONFIG = layer_config.merge_conv_layer_dict
 
 
-def getAllBnScalaLayers(layer_dict_config=None):
-    bn_scala_layers = []
+def getAllBnScaleLayers(layer_dict_config=None):
+    bn_scale_layers = []
     for key, value in layer_dict_config.iteritems():
         for i_value in value:
-            bn_scala_layers.append(i_value)
-    return bn_scala_layers
+            bn_scale_layers.append(i_value)
+    return bn_scale_layers
 
 
 def merge_net(net, nob):
@@ -36,28 +36,28 @@ def merge_net(net, nob):
     w = w * rstd * scale
     b = (b - mean) * rstd * scale + shift
     '''
-    bn_scala_layers = getAllBnScalaLayers(layer_dict_config=MERGE_LAYER_DICT_CONFIG)
+    bn_scale_layers = getAllBnScaleLayers(layer_dict_config=MERGE_LAYER_DICT_CONFIG)
     for i_layer_name in net.params.iterkeys():
         i_layer_data = net.params[i_layer_name]
         if not isinstance(i_layer_data, caffe._caffe.BlobVec):  # check layer type 
             print("layer : {layer} is not caffe._caffe.BlobVec".format(layer=i_layer_name))
             break   
-        if i_layer_name in bn_scala_layers: # bn or scala ,not save to merged net
-            print("layer : {layer} is bn or scala , not process".format(layer=i_layer_name))
+        if i_layer_name in bn_scale_layers: # bn or scale ,not save to merged net
+            print("layer : {layer} is bn or scale , not process".format(layer=i_layer_name))
             continue   
         print("layer name is : {layer}".format(layer=i_layer_name))
         if i_layer_name not in MERGE_LAYER_DICT_CONFIG.keys():  
-            # the layer not contains bn ,scala ,so just save the layer to merge net
-            print("{layer} don't need merge bn and scala to conv".format(
+            # the layer not contains bn ,scale ,so just save the layer to merge net
+            print("{layer} don't need merge bn and scale to conv".format(
                 layer=i_layer_name))
             for i, w in enumerate(i_layer_data):
                 nob.params[i_layer_name][i].data[...] = w.data
         else: 
              # just merge layer in config dict
             bn_layer_name = MERGE_LAYER_DICT_CONFIG[i_layer_name][0]
-            scala_layer_name = MERGE_LAYER_DICT_CONFIG[i_layer_name][1]
+            scale_layer_name = MERGE_LAYER_DICT_CONFIG[i_layer_name][1]
             bn_layer_data = net.params[bn_layer_name]
-            scala_layer_data = net.params[scala_layer_name]
+            scale_layer_data = net.params[scale_layer_name]
             conv_w_old = i_layer_data[0].data
             conv_w_old_channels = conv_w_old.shape[0]
             conv_bias_old = np.zeros(conv_w_old_channels)
@@ -67,8 +67,8 @@ def merge_net(net, nob):
             var = bn_layer_data[1].data  # bn - var
             scalef = bn_layer_data[2].data 
 
-            scales = scala_layer_data[0].data
-            shift = scala_layer_data[1].data
+            scales = scale_layer_data[0].data
+            shift = scale_layer_data[1].data
             if scalef != 0:
                 scalef = 1. / scalef
             mean = mean * scalef
