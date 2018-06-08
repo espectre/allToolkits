@@ -15,12 +15,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 64
     kernel_size: 7
     pad: 3
     stride: 2
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -68,12 +76,20 @@ layer {
     lr_mult: 2.0
     decay_mult: 0.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 64
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -108,13 +124,21 @@ layer {
   param {
     lr_mult: 1.0
     decay_mult: 1.0
+  }  
+  param {
+    lr_mult: 2
+    decay_mult: 0
   }
   convolution_param {
     num_output: 64
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -157,12 +181,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 64
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -198,12 +230,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 64
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -246,12 +286,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 128
     kernel_size: 1
     pad: 0
     stride: 2
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -281,12 +329,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 128
     kernel_size: 3
     pad: 1
     stride: 2
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -322,12 +378,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 128
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -370,12 +434,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 128
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -411,12 +483,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 128
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -459,12 +539,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 256
     kernel_size: 1
     pad: 0
     stride: 2
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -494,12 +582,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 256
     kernel_size: 3
     pad: 1
     stride: 2
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -535,12 +631,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 256
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -583,12 +687,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 256
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -624,12 +736,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 256
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -672,12 +792,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 512
     kernel_size: 1
     pad: 0
     stride: 2
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -706,13 +834,21 @@ layer {
   param {
     lr_mult: 1.0
     decay_mult: 1.0
+  }  
+  param {
+    lr_mult: 2
+    decay_mult: 0
   }
   convolution_param {
     num_output: 512
     kernel_size: 3
     pad: 1
     stride: 2
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -748,12 +884,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 512
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -796,12 +940,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 512
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -837,12 +989,20 @@ layer {
     lr_mult: 1.0
     decay_mult: 1.0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 512
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -2471,12 +2631,20 @@ layer {
     lr_mult: 1
     decay_mult: 1
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 256
     kernel_size: 1
     pad: 0
     stride: 2
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -2526,12 +2694,20 @@ layer {
     lr_mult: 1
     decay_mult: 1
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 256
     kernel_size: 3
     pad: 1
     stride: 2
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -2587,12 +2763,20 @@ layer {
     lr_mult: 1
     decay_mult: 1
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 256
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -2655,12 +2839,20 @@ layer {
     lr_mult: 1
     decay_mult: 1
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 256
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -2716,12 +2908,20 @@ layer {
     lr_mult: 1
     decay_mult: 1
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 256
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -2784,12 +2984,20 @@ layer {
     lr_mult: 1
     decay_mult: 1
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 512
     kernel_size: 1
     pad: 0
     stride: 2
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -2839,12 +3047,20 @@ layer {
     lr_mult: 1
     decay_mult: 0
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 512
     kernel_size: 3
     pad: 1
     stride: 2
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -2900,12 +3116,20 @@ layer {
     lr_mult: 1
     decay_mult: 1
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 512
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -2968,12 +3192,20 @@ layer {
     lr_mult: 1
     decay_mult: 1
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 512
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {
@@ -3029,12 +3261,20 @@ layer {
     lr_mult: 1
     decay_mult: 1
   }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
   convolution_param {
     num_output: 512
     kernel_size: 3
     pad: 1
     stride: 1
-    bias_term: false
+    # bias_term: false
+    bias_filler {
+      type: "constant"
+      value: 0.0
+    }
   }
 }
 # layer {

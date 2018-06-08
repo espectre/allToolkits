@@ -79,10 +79,12 @@ def merge_net(net, nob):
             conv_w_new = conv_w_old * rstd1 * scales1
             conv_bias_new = (conv_bias_old - mean) * rstd * scales + shift
             nob.params[i_layer_name][0].data[...] = conv_w_new
-            if len(nob.params[i_layer_name]) > 1:
+            if len(nob.params[i_layer_name]) > 1: # error , the merged net file , conv should contains bias 
                 nob.params[i_layer_name][1].data[...] = conv_bias_new
 
 
+caffe.set_mode_gpu()
+caffe.set_device(7)
 net = caffe.Net(train_proto, train_model, caffe.TRAIN)
 net_deploy = caffe.Net(deploy_proto, caffe.TEST)
 
