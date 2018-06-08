@@ -4,6 +4,7 @@ merge_conv_layer_dict = {
     # element : type list
     #       [batchnorm layer name,scala layer name]
     # refindet res18 cls mix det model
+    'conv1': ['bn_conv1', 'scale_conv1'],
     'res2a_branch2a': ['bn2a_branch2a', 'scale2a_branch2a'],
     'res2a_branch2b': ['bn2a_branch2b', 'scale2a_branch2b'],
     'res2b_branch2a': ['bn2b_branch2a', 'scale2b_branch2a'],
