@@ -12,7 +12,8 @@ train_model = '/workspace/data/BK/cls-mix-det-Dir/models/mix_res18_det_and_cls_0
 deploy_proto = './models/deploy-final-mergebn.prototxt'
 save_model = '/workspace/data/BK/cls-mix-det-Dir/models/mix_res18_det_and_cls_0606/lib/models/Final_model-mergebn-1.caffemodel'
 
-import merge_layer_config.merge_conv_layer_dict as MERGE_LAYER_DICT_CONFIG
+import merge_layer_config as layer_config
+MERGE_LAYER_DICT_CONFIG = layer_config.merge_conv_layer_dict
 
 
 def getAllBnScalaLayers(layer_dict_config=None):
