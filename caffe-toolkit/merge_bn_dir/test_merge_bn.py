@@ -79,7 +79,8 @@ def merge_net(net, nob):
             conv_w_new = conv_w_old * rstd1 * scales1
             conv_bias_new = (conv_bias_old - mean) * rstd * scales + shift
             nob.params[i_layer_name][0].data[...] = conv_w_new
-            nob.params[i_layer_name][1].data[...] = conv_bias_new
+            if len(nob.params[i_layer_name]) > 1:
+                nob.params[i_layer_name][1].data[...] = conv_bias_new
 
 
 net = caffe.Net(train_proto, train_model, caffe.TRAIN)
