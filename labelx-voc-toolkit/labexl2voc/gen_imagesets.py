@@ -175,8 +175,10 @@ def renameOneImage(oldImageName=None,newImageName=None,oldXmlName=None,newXmlNam
         print(resInfo)
         return (False, "copy image : %s error" % (oldImageName))
     # rename xml file : annotation.filename  must rename
+    # debug , the newImageName is absolute path , but xml file -- filename : ***.jpg ,just  file name 
+    just_newImageName = newImageName.split('/')[-1]
     res, resInfo = xml_helper.renameFileNameElement(
-        xmlFileName=newXmlName, newFileNameElement=newImageName)
+        xmlFileName=newXmlName, newFileNameElement=just_newImageName)
     if not res : # change xml filename element error
         print(resInfo)
         return (False, "change xml fileName element error : %s" % (resInfo))
