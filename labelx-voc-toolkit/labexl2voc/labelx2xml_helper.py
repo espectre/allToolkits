@@ -22,7 +22,7 @@ def process_labelx_jsonFile_Fun(json_file_absolutePath=None, tempSaveDir=None, v
         jsonlistFile=json_file_absolutePath, datasetBasePath=vocpath)
     # rename imame and xml file
     filePrefix = renamePrefix
-    if filePrefix:
+    if not filePrefix:
         filePrefix  = "Terror-detect-"+utils.getTimeFlag(flag=1)
     res, resInfo = gen_imagesets.renamePascalImageDataSet(
         vocpath=vocpath, filePrefix=filePrefix)
