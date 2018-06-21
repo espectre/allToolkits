@@ -46,6 +46,8 @@ def parser_args():
                         default=None, type=str)
     parser.add_argument('--labelFileName', required=True, dest='labelFileName', help='label file name',
                         default=None, type=str)
+    parser.add_argument('--batchSize', required=False, dest='batchSize', help='the input data batch size',
+                        default=1, type=int)
     parser.add_argument('--visFlag', dest='visFlag', help='visulize the detect bbox',
                         default=0, type=int)  # 0 : not visulize , 1 : visulize
     # parser.add_argument('--threshold', dest='threshold',
@@ -64,7 +66,7 @@ def temp_init():
     global IMAGE_SIZE  # 处理图片的大小
     global ONE_BATCH_SIZE  # batch size 的大小 （ 要和 deploy 的设置一致）
     global VISSAVEDIR
-    ONE_BATCH_SIZE = 16
+    ONE_BATCH_SIZE = int(args.batchSize)
     URLFLAG = True if args.urlfileName else False
     IMAGE_SIZE = 320
     THRESHOLDS = [0, 0.1, 0.1, 0.1, 0.1, 0.1, 1.0]
