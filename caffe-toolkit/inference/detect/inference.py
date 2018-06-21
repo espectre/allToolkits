@@ -10,8 +10,8 @@ from argparse import ArgumentParser
 import time
 import json
 import urllib
-from google.protobuf import text_format
 from caffe.proto import caffe_pb2
+import google.protobuf.text_format as text_format
 """
     bk terror caffe detect model , refineDet res 18 model
     这个脚本是用来推理 refinedet 模型。
@@ -193,13 +193,25 @@ def readImage_fun(isUrlFlag=False, imagePath=None):
     return im
 
 
+def change_deploy(deploy_file=None,input_data_batch_size=None):
+    net = caffe_pb2.NetParameter()
+    with open(deploy_file,'r') as f:
+        text_format.Merge(f.read(), net)
+    data_layer_index = 0
+    data_layer = net.layer[data_layer_index]
+    data_layer.input_param.shape[0].dim[0] = input_data_batch_size
+    with open(deploy_file, 'w') as f:
+        f.write(str(net))
 def init_models():
     global CLS_LABEL_LIST  # 类别 label
+    global ONE_BATCH_SIZE # batch size
     caffe.set_mode_gpu()
     caffe.set_device(args.gpu_id)
     deployName = os.path.join(args.modelBasePath, args.deployFileName)
     modelName = os.path.join(args.modelBasePath, args.modelName)
     labelName = os.path.join(args.modelBasePath, args.labelFileName)
+    change_deploy(deploy_file=deployName,
+                  input_data_batch_size=int(ONE_BATCH_SIZE))
     net_cls = caffe.Net(deployName, modelName, caffe.TEST)
     with open(labelName, 'r') as f:
         CLS_LABEL_LIST = [i.strip().split(',')[-1]
