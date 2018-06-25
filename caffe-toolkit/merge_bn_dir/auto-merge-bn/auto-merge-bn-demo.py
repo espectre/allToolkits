@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-import _init_paths
 import numpy as np
 import sys
 import os
 import os.path as osp
-import google.protobuf as pb
+import google.protobuf.text_format as text_format
 from argparse import ArgumentParser
 import sys
 import caffe
@@ -13,7 +12,7 @@ import caffe
 def load_and_fill_biases(src_model, src_weights, dst_model, dst_weights):
     with open(src_model) as f:
         model = caffe.proto.caffe_pb2.NetParameter()
-        pb.text_format.Merge(f.read(), model)
+        text_format.Merge(f.read(), model)
 
     for i, layer in enumerate(model.layer):
         if layer.type == 'Convolution':  # or layer.type == 'Scale':
@@ -24,7 +23,7 @@ def load_and_fill_biases(src_model, src_weights, dst_model, dst_weights):
                 layer.convolution_param.bias_filler.value = 0.0
 
     with open(dst_model, 'w') as f:
-        f.write(pb.text_format.MessageToString(model))
+        f.write(text_format.MessageToString(model))
 
     caffe.set_mode_cpu()
     net_src = caffe.Net(src_model, src_weights, caffe.TEST)
@@ -147,7 +146,7 @@ def merge_batchnorms_in_net(net):
 def process_model(net, src_model, dst_model, func_loop, func_finally):
     with open(src_model) as f:
         model = caffe.proto.caffe_pb2.NetParameter()
-        pb.text_format.Merge(f.read(), model)
+        text_format.Merge(f.read(), model)
 
     for i, layer in enumerate(model.layer):
         map(lambda x: x(layer, net, model, i), func_loop)
@@ -155,7 +154,7 @@ def process_model(net, src_model, dst_model, func_loop, func_finally):
     map(lambda x: x(net, model), func_finally)
 
     with open(dst_model, 'w') as f:
-        f.write(pb.text_format.MessageToString(model))
+        f.write(text_format.MessageToString(model))
 
 
 # Functions to remove (redundant) BN and Scale layers
