@@ -1,4 +1,3 @@
-https: // blog.csdn.net/diye2008/article/details/78492181
 import sys
 import argparse
 import find_mxnet
