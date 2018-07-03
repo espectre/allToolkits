@@ -44,8 +44,8 @@ def parser_args():
                         default=None, type=str)
     parser.add_argument('--deployFileName', required=True, dest='deployFileName', help='deploy file name',
                         default=None, type=str)
-    parser.add_argument('--labelFileName', required=True, dest='labelFileName', help='label file name, [bk_det_label,bk_cls_label,pulp_cls_label]',
-                        default=None, nargs='+', type=list)  # [bk_det_label,bk_cls_label,pulp_cls_label]
+    parser.add_argument('--labelFileName', required=True, dest='labelFileName', help='label file name, eg:bk_det_label,bk_cls_label,pulp_cls_label',
+                        default=None, type=str)  # [bk_det_label,bk_cls_label,pulp_cls_label]
     parser.add_argument('--visFlag', dest='visFlag', help='visulize the detect bbox',
                         default=0, type=int)  # 0 : not visulize , 1 : visulize
     # parser.add_argument('--threshold', dest='threshold',
@@ -69,7 +69,7 @@ def temp_init():
     ONE_BATCH_SIZE = 1
     URLFLAG = True if args.urlfileName else False
     IMAGE_SIZE = 224
-    THRESHOLDS = [1.0, 0.2, 0.2, 0.2, 0.2, 0.3,0.4, 1.0]
+    THRESHOLDS = [1.0, 0.2, 0.2, 0.2, 0.2, 0.3, 0.4, 1.0]
     if args.urlfileName:
         result_file = args.urlfileName+'-' + \
             str(args.urlfileName_beginIndex)+"-result"
@@ -85,7 +85,7 @@ def temp_init():
     bk_det_result_file = result_file+"-bk-det-"+time_str+'.tsv'
     final_result_file = result_file+"-final-"+time_str+'.tsv'
     RESULT_FILE_OP = open(bk_det_result_file, 'w')
-    FINAL_RESULT_FILE_OP = open(final_result_file,'w')
+    FINAL_RESULT_FILE_OP = open(final_result_file, 'w')
     pass
 
 
@@ -216,13 +216,14 @@ def readImage_fun(isUrlFlag=False, imagePath=None):
 
 def init_models():
     global CLS_LABEL_LIST  # bk det 类别 label
-    global BK_CLS_LABEL_LIST # bk class label
+    global BK_CLS_LABEL_LIST  # bk class label
     global PULP_CLS_LABEL_LIST  # pulp class label
     caffe.set_mode_gpu()
     caffe.set_device(args.gpu_id)
     deployName = os.path.join(args.modelBasePath, args.deployFileName)
     modelName = os.path.join(args.modelBasePath, args.modelName)
-    labelNames = args.labelFileName
+    labelNames = args.labelFileName.split(',')
+    print(labelNames)
     bk_det_labelName = os.path.join(args.modelBasePath, labelNames[0])
     bk_cls_labelName = os.path.join(args.modelBasePath, labelNames[1])
     pulp_cls_labelName = os.path.join(args.modelBasePath, labelNames[2])
@@ -232,10 +233,10 @@ def init_models():
                           for i in f.readlines() if i.strip()]
     with open(bk_cls_labelName, 'r') as f:  # csv file
         BK_CLS_LABEL_LIST = [i.strip().split(',')[-1]
-                          for i in f.readlines() if i.strip()]
+                             for i in f.readlines() if i.strip()]
     with open(pulp_cls_labelName, 'r') as f:  # csv file
         PULP_CLS_LABEL_LIST = [i.strip().split(',')[-1]
-                          for i in f.readlines() if i.strip()]
+                               for i in f.readlines() if i.strip()]
     return net_cls
 
 
@@ -277,8 +278,11 @@ def cls_postprocess(out):
     score_cls = [sort_pre[-j][1] for j in range(1, 2)]
     return label_cls[0], score_cls[0][0][0]
 
+
 all_process_time_exclude_post_time = 0
 all_infe_time = 0
+
+
 def infereneAllImage(net_cls=None, imageList=None, urlFlag=None):
     global ONE_BATCH_SIZE
     global all_infe_time
@@ -297,7 +301,7 @@ def infereneAllImage(net_cls=None, imageList=None, urlFlag=None):
             continue
         img = preProcess(oriImage=oriImg)
         __b = time.time()
-        print("image process time %f"%(__b - __a))
+        print("image process time %f" % (__b - __a))
         batch_image_data.append(img)
         batch_image_path.append(image_path)
         h_w = [oriImg.shape[0], oriImg.shape[1]]
@@ -361,9 +365,7 @@ def infereneAllImage(net_cls=None, imageList=None, urlFlag=None):
     return
 
 
-
-
-def merge_three_output_to_finalResult(bk_det_result=None,bk_cls_result=None,pulp_cls_result=None):
+def merge_three_output_to_finalResult(bk_det_result=None, bk_cls_result=None, pulp_cls_result=None):
     global CLS_LABEL_LIST  # bk det 类别 label
     global BK_CLS_LABEL_LIST  # bk class label
     global PULP_CLS_LABEL_LIST  # pulp class label
@@ -374,7 +376,7 @@ def merge_three_output_to_finalResult(bk_det_result=None,bk_cls_result=None,pulp
     image_result_dict['text'] = 0
     image_result_dict['face'] = 0
     image_result_dict['normal'] = 0
-    if bk_det_result :
+    if bk_det_result:
         for bbox in bk_det_result:
             if bbox['class'] == 'face':
                 image_result_dict['face'] = 1
@@ -388,8 +390,15 @@ def merge_three_output_to_finalResult(bk_det_result=None,bk_cls_result=None,pulp
         image_result_dict['march'] = 1
     if PULP_CLS_LABEL_LIST[pulp_cls_result[0]] == 'pulp':
         image_result_dict['pulp'] = 1
+    normalFlag = 0
+    for key in image_result_dict:
+        if key == "normal":
+            continue
+        if image_result_dict[key] != 0:
+            normalFlag = 1
+    if normalFlag == 0:
+        image_result_dict['normal'] = 1
     return image_result_dict
-
 
 
 def process_res(res_list=None):
@@ -460,9 +469,10 @@ def main():
     begin_process_time = time.time()
     infereneAllImage(net_cls=net_cls, imageList=imageList, urlFlag=URLFLAG)
     end_process_time = time.time()
-    print("process image count : %d"%(len(imageList)))
-    print("all inference time : %f"%(all_infe_time))
-    print("all process time : %f"%(end_process_time-begin_process_time))
+    print("process image count : %d" % (len(imageList)))
+    print("all inference time : %f" % (all_infe_time))
+    print("all process time : %f" % (end_process_time-begin_process_time))
+
 
 if __name__ == '__main__':
     main()
@@ -477,4 +487,3 @@ python terror-det-refineDet-res18-inference.py \
 --gpu 0
 
 """
-
