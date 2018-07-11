@@ -219,24 +219,16 @@ def checkImageReadabilityAndGetMd5(imageName=None,unReadImageLogFileOp=None):
         infoStr = "%s channel is not 3" % (imageName)
         print(infoStr)
         return (False, infoStr)
-    res, img_md5 = utils.md5_process(image=img, dataOrNameFlag=0)
-    if not res:
-        return (False,img_md5)
-    else:
-        return(True,img_md5)
-    pass
+    img_md5 = utils.getMd5FromImage(imageNamePath=imageName)
+    return img_md5
 
 
 
 def getAllImageMd5(imageList=None):
     md5_list = []
     for i in imageList:
-        res ,i_md5 = checkImageReadabilityAndGetMd5(imageName=i)
-        if res:
-            md5_list.append(i_md5)
-        else:
-            print("ERROR: get md5 error%s"%(i))
-            exit()
+        i_md5 = checkImageReadabilityAndGetMd5(imageName=i)
+        md5_list.append(i_md5)
     md5_dict = dict()
     assert len(imageList) == len(md5_list)
     for index in range(len(md5_list)):

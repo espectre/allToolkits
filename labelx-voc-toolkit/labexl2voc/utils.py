@@ -80,27 +80,36 @@ def readImage_fun(isUrlFlag=None, imagePath=None):
         return None
     return im
 
-def md5_process(image=None,dataOrNameFlag=None):
-    """
-        read image , get md5 
-        dataOrNameFlag == 0: image is imageData
-        dataOrNameFlag  == 1 : image is loca image file name
-        dataOrNameFlag == 2 : image  is url 
-    """
-    if dataOrNameFlag == 0:
-        imageData = image
-    elif dataOrNameFlag == 1:
-        imageData = readImage_fun(isUrlFlag=False, imagePath=image)
-    elif dataOrNameFlag == 2:
-        imageData = readImage_fun(isUrlFlag=True, imagePath=image) 
-        pass
-    if np.shape(imageData) == ():
-        return (False, "imageData is None")
-    hash_md5 = hashlib.md5()
-    for chunk in iter(lambda: imageData.read(4096), b""):
-        hash_md5.update(chunk)
-    return (True,hash_md5.hexdigest())
+# error , get md5 from cv2.imread()->numpy.array unequal  directly ream image file data
+# def md5_process(image=None,dataOrNameFlag=None):
+#     """
+#         read image , get md5 
+#         dataOrNameFlag == 0: image is imageData
+#         dataOrNameFlag  == 1 : image is loca image file name
+#         dataOrNameFlag == 2 : image  is url 
+#     """
+#     if dataOrNameFlag == 0:
+#         imageData = image
+#     elif dataOrNameFlag == 1:
+#         imageData = readImage_fun(isUrlFlag=False, imagePath=image)
+#     elif dataOrNameFlag == 2:
+#         imageData = readImage_fun(isUrlFlag=True, imagePath=image) 
+#         pass
+#     if np.shape(imageData) == ():
+#         return (False, "imageData is None")
+#     hash_md5 = hashlib.md5()
+#     # for chunk in iter(lambda: imageData.read(4096), b""):
+#     for chunk in np.nditer(imageData):
+#         hash_md5.update(chunk)
+#     return (True,hash_md5.hexdigest())
 
+
+def getMd5FromImage(imageNamePath=None):
+    hash_md5 = hashlib.md5()
+    with open(imageNamePath, 'rb') as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
 
     
