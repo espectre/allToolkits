@@ -293,6 +293,9 @@ def reWriteImageWithCv2(vocPath=None):
     for i in sorted(os.listdir(imageBasePath)):
         allImageList.append(os.path.join(imageBasePath, i))
     for i in allImageList:
-        image_helper.cv2ImreadAndWrite(imageNamePath=i)
+        res = image_helper.cv2ImreadAndWrite(
+            oldImageNamePath=i, newImageNamePath=i)
+        if not res : # error
+            exit
     print("cv2 imwrite all image success")
     pass

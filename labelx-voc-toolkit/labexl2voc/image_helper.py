@@ -164,7 +164,11 @@ class cons_worker(threading.Thread):
         GLOBAL_LOCK.release()
 
 
-def cv2ImreadAndWrite(imageNamePath=None):
-    im = cv2.imread(imageNamePath, cv2.IMREAD_COLOR)
-    cv2.imwrite(imageNamePath,im)
-    pass
+def cv2ImreadAndWrite(oldImageNamePath=None,newImageNamePath=None):
+    try:
+        im = cv2.imread(oldImageNamePath, cv2.IMREAD_COLOR)
+        cv2.imwrite(newImageNamePath, im)
+        return True
+    except :
+        print("ERROR cv2 imwrite %s, %s"%(oldImageNamePath,newImageNamePath))
+    return False

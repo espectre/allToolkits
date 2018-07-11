@@ -10,6 +10,7 @@ import json
 import xml_helper
 import utils
 import numpy as np
+import image_helper
 '''
 设置trainval和test数据集包含的图片
 '''
@@ -159,12 +160,13 @@ def renamePascalImageDataSet(vocpath=None,filePrefix=None):
 
 def renameOneImage(oldImageName=None,newImageName=None,oldXmlName=None,newXmlName=None):
     # rename image name
-    copyImageFileCmdStr = "cp %s %s" % (oldImageName, newImageName)
-    res,resInfo = utils.runShellCommandFun(copyImageFileCmdStr)
+    # copyImageFileCmdStr = "cp %s %s" % (oldImageName, newImageName)
+    # res,resInfo = utils.runShellCommandFun(copyImageFileCmdStr)
+    res = image_helper.cv2ImreadAndWrite(
+        oldImageNamePath=oldImageName, newImageNamePath=newImageName)
     if res:
         pass
     else:
-        print(resInfo)
         return (False,"copy image : %s error"%(oldImageName))
     # rename xml file name
     copyXmlFileCmdStr = "cp %s %s" % (oldXmlName, newXmlName)
