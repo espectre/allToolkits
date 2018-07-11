@@ -156,6 +156,8 @@ def renamePascalImageDataSet(vocpath=None,filePrefix=None):
             return (False,"rename %s ERROR"%(i_image))
         else:
             newNameIndex += 1 
+        if newNameIndex % 1000 == 0:
+            print("rename image and xml : %d"%(newNameIndex))
     return (True,"rename all image SUCCESS")
 
 def renameOneImage(oldImageName=None,newImageName=None,oldXmlName=None,newXmlName=None):
@@ -228,9 +230,12 @@ def checkImageReadabilityAndGetMd5(imageName=None,unReadImageLogFileOp=None):
 
 def getAllImageMd5(imageList=None):
     md5_list = []
-    for i in imageList:
-        i_md5 = checkImageReadabilityAndGetMd5(imageName=i)
+    for i in range(len(imageList)):
+        imageName = imageList[i]
+        i_md5 = checkImageReadabilityAndGetMd5(imageName=imageName)
         md5_list.append(i_md5)
+        if (i+1) % 1000 == 0:
+            print("processing : %d"%(i+1))
     md5_dict = dict()
     assert len(imageList) == len(md5_list)
     for index in range(len(md5_list)):

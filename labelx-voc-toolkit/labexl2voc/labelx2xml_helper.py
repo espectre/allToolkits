@@ -23,7 +23,7 @@ def process_labelx_jsonFile_Fun(json_file_absolutePath=None, tempSaveDir=None, v
     # rename imame and xml file
     filePrefix = renamePrefix
     if not filePrefix: # 没有设置 rename prefix 的情况下
-        filePrefix  = "Terror-detect-"+utils.getTimeFlag(flag=1)
+        filePrefix  = "Terror-detect-"+utils.getTimeFlag(flag=1) # 没有设置前缀，那么自动生成前缀
     res, resInfo = gen_imagesets.renamePascalImageDataSet(
         vocpath=vocpath, filePrefix=filePrefix)
     if not res:
@@ -292,10 +292,13 @@ def reWriteImageWithCv2(vocPath=None):
     imageBasePath = os.path.join(vocPath, 'JPEGImages')
     for i in sorted(os.listdir(imageBasePath)):
         allImageList.append(os.path.join(imageBasePath, i))
-    for i in allImageList:
+    for i in range(len(allImageList)):
+        imageNamePath = allImageList[i]
         res = image_helper.cv2ImreadAndWrite(
             oldImageNamePath=i, newImageNamePath=i)
         if not res : # error
             exit
+        if (i+1) % 1000 == 0:
+            print("processing : %d"%(i+1))
     print("cv2 imwrite all image success")
     pass

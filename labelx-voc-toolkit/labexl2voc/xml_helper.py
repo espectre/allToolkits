@@ -229,14 +229,18 @@ def writeXmlFile(root=None, xmlFileName=None):
 
 def convertLabelxJsonListToXmlFile(jsonlistFile=None,datasetBasePath=None):
     with open(jsonlistFile,'r') as f:
+        i_count = 0
         for line in f.readlines():
             line = line.strip()
             if len(line) <= 0:
                 continue
+            i_count += 1
             res = createXmlFileByLabelXJsonList(
                 labelxJsonLine=line, basePath=datasetBasePath)
             if res == "error":
                 print("ERROR : %s" % (line))
+            if i_count % 1000 == 0:
+                print("processing generate xml : %d"%(i_count))
 
 
 def parseXmlFile_countBboxClassNum(xmlFile=None):
