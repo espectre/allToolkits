@@ -1,0 +1,15 @@
+modelParam:
+  basePath:    # all model file put in the folder
+  caffeModel:  # caffe model weight file
+  deployFile:  # caffe model net file
+  labelsFile:  # csv format file
+inputDataParam:
+  batchSize: # batch size
+  imageParam: 
+    resizeSize: # input image resize size
+    centerCropSize: #image first resize ,second center crop size
+  imagePreprocessParam:
+    channelMeanValue: # array format eg: [103.52, 116.28, 123.675]
+    pixelScalaValue: # scala value 
+
+

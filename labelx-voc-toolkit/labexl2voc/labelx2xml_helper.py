@@ -22,7 +22,7 @@ def process_labelx_jsonFile_Fun(json_file_absolutePath=None, tempSaveDir=None, v
         jsonlistFile=json_file_absolutePath, datasetBasePath=vocpath)
     # rename imame and xml file
     filePrefix = renamePrefix
-    if not filePrefix:
+    if not filePrefix: # 没有设置 rename prefix 的情况下
         filePrefix  = "Terror-detect-"+utils.getTimeFlag(flag=1)
     res, resInfo = gen_imagesets.renamePascalImageDataSet(
         vocpath=vocpath, filePrefix=filePrefix)
@@ -53,10 +53,6 @@ def covertLabelxMulFilsToVoc_Fun(labelxPath=None, vocResultPath=None, renamePref
     process_labelx_jsonFile_Fun(
         json_file_absolutePath=finalOneFile, tempSaveDir=tempSaveDir, vocpath=vocpath, renamePrefix=renamePrefix)
     pass
-
-
-
-
 
 def mergePascalDataset(littlePath=None, finalPath=None):
     if not os.path.exists(finalPath):
@@ -246,4 +242,49 @@ def drawImageWithBbosFun(vocPath=None):
         pass
     pass
     pass
+
+def getAllImageMD5Fun(vocPath=None,deleteFlag=False):
+    allImageList = []
+    imageBasePath = os.path.join(vocPath, 'JPEGImages')
+    for i in sorted(os.listdir(imageBasePath)):
+        allImageList.append(os.path.join(imageBasePath,i))
+    imageMd5_dict = gen_imagesets.getAllImageMd5(imageList=allImageList)
+    md5_result_file = os.path.join(vocPath,'md5_result.json')
+    with open(md5_result_file,'w') as f:
+        for image_md5 in imageMd5_dict:
+            md5_images_list = imageMd5_dict[image_md5]
+            line_dict = {}
+            line_dict['md5'] = image_md5
+            line_dict['count'] = len(md5_images_list)
+            line_dict['images'] = md5_images_list
+            f.write('%s\n'%(json.dumps(line_dict)))
+    deleteFileList = [] # just save iamgeFile ( not include postfix)
+    for image_md5 in imageMd5_dict:
+        md5_images_list = imageMd5_dict[image_md5]
+        if len(md5_images_list) > 1: # 这个 md5 对应的图片有重复的
+            if deleteFlag:
+                md5_xmls_list = []
+                for i_image in md5_images_list:
+                    just_image_name = i_image.split('/')[-1].split('.')[0]
+                    i_xml = os.path.join(vocPath, 'Annotations',
+                                         just_image_name+'.xml')
+                    md5_xmls_list.append(i_xml)
+                saveIndex , saveXmlFile = xml_helper.getMaxBboxXml(xmlFileList=md5_xmls_list)
+                saveJustImageName = saveXmlFile.split('/')[-1].split('.')[0]
+                for i_index in range(len(md5_images_list)):
+                    imaeg_name = md5_images_list[i_index]
+                    xml_name = md5_xmls_list[i_index]
+                    if saveJustImageName not in imaeg_name: # delete image and xml file 
+                        cmdStr = "rm %s && rm %s"%(imaeg_name,xml_name)
+                        res = os.system(cmdStr)
+                        if res != 0:
+                            print("Error")
+                            print(cmdStr)
+                            exit()
+                        deleteFile = imaeg_name.split('/')[-1].split('.')[0]
+                        deleteFileList.append(deleteFile)
+    if deleteFlag and len(deleteFileList) > 0:  # 由于删除了文件，需要重新生成 ImageSets/Main
+        gen_imagesets.gen_imagesets(vocpath=vocPath)
+        
+    
 

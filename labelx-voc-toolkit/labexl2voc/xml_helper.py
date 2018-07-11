@@ -259,4 +259,18 @@ def parseXmlFile_countBboxClassNum(xmlFile=None):
     return object_list
 
 
+def getMaxBboxXml(xmlFileList=None):
+    if len(xmlFileList) == 0:
+        return (False,'')
+    maxBboxXml = xmlFileList[0]
+    maxBBoxCount = len(parseXmlFile_countBboxClassNum(xmlFile=maxBboxXml))
+    max_index = 0
+    for i in range(len(xmlFileList)):
+        xmlFile = xmlFileList[i]
+        object_list = parseXmlFile_countBboxClassNum(xmlFile=xmlFile)
+        if len(object_list) > maxBBoxCount:
+            maxBBoxCount = len(object_list)
+            maxBboxXml = xmlFile
+            max_index = i
+    return (max_index,maxBboxXml)
 

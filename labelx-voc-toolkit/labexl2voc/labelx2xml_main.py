@@ -16,7 +16,7 @@ helpInfoStr = \
         2 : 将一个 pascal voc 数据集 添加到 另外一个数据集中
             --vocpath ,required 
             --finalVocpath , required
-            --flag ,"overwrite,append"  
+            --flag ,"overwrite,append"  # 这个还没有实现
                     overwrite 表示如果 存在 xml文件名相同，那么就覆盖原有的xml文件，重新生成。
                     append 表示如果 存在xml 文件，那么进行 bbox 追加
             将 vocpath 指向的数据集 添加到 finalVocpath 这个数据集中
@@ -27,6 +27,9 @@ helpInfoStr = \
         5 : 抽样画图，抽样画 pascal voc 格式的数据
             --vocpath ,required
             会 将画的图 保存在 vocpath+'-draw' 目录下。
+        6 : 去数据集每张图片求 md5 然后去重
+            --vocpath,require
+            --deleteSameMd5Flag # 0 : not delete ,just get md5 , 1 : delete Sama md5 xml and image
 """
 changeLog = \
 """
@@ -34,6 +37,8 @@ changeLog = \
         gen_imagesets : add rename image 
         gen_imagesets : bbox info add to readme.txt
         add utils file ,the file is common used function
+    2018-07-10:
+        add actionFlag 6 : image md5 check
 """
 
 def parse_args():
@@ -66,7 +71,11 @@ def parse_args():
                         default=None,
                         help='rename image : new file prefix',
                         type=str)
-
+    parser.add_argument('--deleteSameMd5Flag',
+                        dest='deleteSameMd5Flag',
+                        default=0,
+                        help='0:just get all md5 , 1: delete same md5 image',
+                        type=int)
     args = parser.parse_args()
     return args
 
@@ -118,6 +127,13 @@ def main():
             print("vocpath is required")
             return -1
         labelx2xml_helper.drawImageWithBbosFun(vocPath=vocpath)
+    elif args.actionFlag == 6:
+        vocpath = args.vocpath
+        if vocpath == None:
+            print("vocpath is required")
+            return -1
+        labelx2xml_helper.getAllImageMD5Fun(
+            vocPath=args.vocpath, deleteFlag=args.deleteSameMd5Flag)
     pass
 
 if __name__ == '__main__':

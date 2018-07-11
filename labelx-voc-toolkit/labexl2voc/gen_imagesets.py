@@ -208,14 +208,14 @@ def checkImageReadabilityAndGetMd5(imageName=None,unReadImageLogFileOp=None):
     '''
     img = utils.readImage_fun(isUrlFlag=False, imagePath=imageName)
     if np.shape(img) == ():
-        unReadImageLogFileOp.write(imageName+'\n')
-        unReadImageLogFileOp.flush()
+        # unReadImageLogFileOp.write(imageName+'\n')
+        # unReadImageLogFileOp.flush()
         infoStr = "ReadImageError : %s" % (imageName)
         print(infoStr)
         return (False, infoStr)
     if img.shape[2] != 3:
-        unReadImageLogFileOp.write(imageName+'\n')
-        unReadImageLogFileOp.flush()
+        # unReadImageLogFileOp.write(imageName+'\n')
+        # unReadImageLogFileOp.flush()
         infoStr = "%s channel is not 3" % (imageName)
         print(infoStr)
         return (False, infoStr)
@@ -226,43 +226,24 @@ def checkImageReadabilityAndGetMd5(imageName=None,unReadImageLogFileOp=None):
         return(True,img_md5)
     pass
 
-# def statisticBboxInfo_one_class(imagelistFile=None, xmlFileBasePath=None, printFlag=True):
-#     """
-#       imagelistFile is file , per line is a image(xml) file 
-#         not include jpg or xml 
-#     """
-#     line_count = 0
-#     label_count_dict = dict()
-#     with open(imagelistFile, 'r') as f:
-#         for line in f.readlines():
-#             line = line.strip()
-#             if not line:
-#                 continue
-#             line_count += 1
-#             xmlFile = os.path.join(xmlFileBasePath, line+'.xml')
-#             object_list = xml_helper.parseXmlFile_countBboxClassNum(
-#                 xmlFile=xmlFile)
-#             for i_object in object_list:
-#                 label = i_object['name']
-#                 if label in ['isis flag', 'islamic flag', 'tibetan flag']:
-#                     print(line)
-#                 # if label in label_count_dict:
-#                 #     label_count_dict[label] = label_count_dict[label] + 1
-#                 # else:
-#                 #     label_count_dict[label] = 1
-#     # if printFlag:
-#     #     print("*"*100)
-#     #     print("image count in %s is : %d" % (imagelistFile, line_count))
-#     #     for key in sorted(label_count_dict.keys()):
-#     #         print("%s : %d" % (key, label_count_dict[key]))
-#     # return label_count_dict
 
-# def main():
-#     # imagelistFile = "/workspace/data/BK/terror-dataSet-Dir/TERROR-DETECT-V1.0/ImageSets/Main/trainval.txt"
-#     imagelistFile = "/workspace/data/BK/terror-dataSet-Dir/TERROR-DETECT-V1.0/ImageSets/Main/test.txt"
-#     xmlFileBasePath = "/workspace/data/BK/terror-dataSet-Dir/TERROR-DETECT-V1.0/Annotations"
-#     # statisticBboxInfo(imagelistFile=imagelistFile,
-#     #                       xmlFileBasePath=xmlFileBasePath)
-#     statisticBboxInfo_one_class(imagelistFile=imagelistFile,xmlFileBasePath=xmlFileBasePath)
-# if __name__ == '__main__':
-#     main()
+
+def getAllImageMd5(imageList=None):
+    md5_list = []
+    for i in imageList:
+        res ,i_md5 = checkImageReadabilityAndGetMd5(imageName=i)
+        if res:
+            md5_list.append(i_md5)
+        else:
+            print("ERROR: get md5 error%s"%(i))
+            exit()
+    md5_dict = dict()
+    assert len(imageList) == len(md5_list)
+    for index in range(len(md5_list)):
+        md5 = md5_list[index]
+        imageName = imageList[index]
+        if md5 not in md5_dict:
+            md5_dict[md5] = []
+        md5_dict[md5].append(imageName)
+    return md5_dict
+        
