@@ -287,4 +287,12 @@ def getAllImageMD5Fun(vocPath=None,deleteFlag=False):
         gen_imagesets.gen_imagesets(vocpath=vocPath)
         
     
-
+def reWriteImageWithCv2(vocPath=None):
+    allImageList = []
+    imageBasePath = os.path.join(vocPath, 'JPEGImages')
+    for i in sorted(os.listdir(imageBasePath)):
+        allImageList.append(os.path.join(imageBasePath, i))
+    for i in allImageList:
+        image_helper.cv2ImreadAndWrite(imageNamePath=i)
+    print("cv2 imwrite all image success")
+    pass

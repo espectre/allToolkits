@@ -7,6 +7,7 @@ import threading
 import Queue
 import time
 import numpy as np
+import cv2
 
 def downloadImage_By_urllist(labelxjson=None, tempSaveDir=None, vocpath=None):
     imageSaveDir = os.path.join(vocpath, 'JPEGImages')
@@ -163,127 +164,7 @@ class cons_worker(threading.Thread):
         GLOBAL_LOCK.release()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# not used ********************
-
-
-def remove_same_image_by_md5():
+def cv2ImreadAndWrite(imageNamePath=None):
+    im = cv2.imread(imageNamePath, cv2.IMREAD_COLOR)
+    cv2.imwrite(imageNamePath,im)
     pass
-
-
-
-
-def checkFileIsImags(filePath):
-    if ('JPEG' in filePath.upper()) or ('JPG' in filePath.upper()) \
-            or ('PNG' in filePath.upper()) or ('BMP' in filePath.upper()):
-        return True
-    return False
-    pass
-
-def getAllImages(basePath=None):
-    allImageList=[]
-    for parent,dirnames,filenames in os.walk(basePath):
-        for file in filenames:
-            imagePathName = os.path.join(parent,file)
-            if checkFileIsImags(imagePathName):
-                allImageList.append(imagePathName)
-            else:
-                # print("%s isn't image"%(imagePathName))
-                pass
-    return  allImageList
-    pass
-
-def md5_process(image=None):
-    hash_md5 = hashlib.md5()
-    with open(image,'rb') as f:
-        for chunk in iter(lambda :f.read(4096),b""):
-            hash_md5.update(chunk)
-        return hash_md5.hexdigest()
-    pass
-
-
-def mv_same_md5_file(imageName=None,basePath=None):
-    # mv image
-    imageNameAndPath = os.path.join(basePath,'JPEGImages',imageName)
-    imageSameSavePath = os.path.join(basePath,'JPEGImages-sameImage')
-    if not os.path.exists(imageSameSavePath):
-        os.makedirs(imageSameSavePath)
-    cmdStrImg ="mv %s %s"%(imageNameAndPath,imageSameSavePath)
-    # mv xml
-    xmlFileName = imageName[:imageName.rfind('.')]+'.xml'
-    xmlNameAndPath = os.path.join(basePath,'Annotations',xmlFileName)
-    xmlSameSavePath = os.path.join(basePath,'Annotations-sameImage')
-    if not os.path.exists(xmlSameSavePath):
-        os.makedirs(xmlSameSavePath)
-    cmdStrXml = "mv %s %s"%(xmlNameAndPath,xmlSameSavePath)
-    img_result_flag = os.system(cmdStrImg)
-    xml_result_flag = os.system(cmdStrXml)
-    pass
-
-
-
-def getNameByAbsolutePath(absolutePath=None):
-    name = absolutePath.split('/')[-1]
-    # name = name[:name.rfind('.')]
-    return name
-    pass
-
-def md5_remove_model_fun(basePath=None):
-    imagePath = os.path.join(basePath,'JPEGImages')
-    xmlPath = os.path.join(basePath,'Annotations')
-    allImagesPathList = getAllImages(basePath=imagePath)
-    md5_imagaPath_dict = {}
-    for imagePath in allImagesPathList:
-        # imagePath is absolute path
-        md5_key = md5_process(imagePath)
-        if md5_key in md5_imagaPath_dict:
-            print("%s --- %s same md5_key" % (getNameByAbsolutePath(absolutePath=imagePath),
-                                              getNameByAbsolutePath(absolutePath=md5_imagaPath_dict.get(md5_key))))
-            mv_same_md5_file(imageName=getNameByAbsolutePath(imagePath),basePath=basePath)
-        else:
-            md5_imagaPath_dict[md5_key] = imagePath
-    print("before remove same image : %d"%(len(allImagesPathList)))
-    print("after remove same image : %d"%(len(md5_imagaPath_dict)))
-    pass
-

@@ -144,9 +144,9 @@ def renamePascalImageDataSet(vocpath=None,filePrefix=None):
             infoStr = "xml file : %s not exist" % (oldXmlName)
             print(infoStr)
             return (False,infoStr)
-        newImageName = filePrefix+"-"+str(newNameIndex).rjust(8,'0')+'.jpg'
+        newImageName = filePrefix+"-"+str(newNameIndex).rjust(10,'0')+'.jpg'
         newImageAbsoName = os.path.join(_IMAGE_File_PATH, newImageName)
-        newXmlName = filePrefix+"-"+str(newNameIndex).rjust(8, '0')+'.xml'
+        newXmlName = filePrefix+"-"+str(newNameIndex).rjust(10, '0')+'.xml'
         newXmlAbsoName = os.path.join(_XML_FILE_PATH, newXmlName)
         res,resInfo = renameOneImage(oldImageName=oldImageName, newImageName=newImageAbsoName,
                        oldXmlName=oldXmlName, newXmlName=newXmlAbsoName)

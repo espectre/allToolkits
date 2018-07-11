@@ -27,9 +27,11 @@ helpInfoStr = \
         5 : 抽样画图，抽样画 pascal voc 格式的数据
             --vocpath ,required
             会 将画的图 保存在 vocpath+'-draw' 目录下。
-        6 : 去数据集每张图片求 md5 然后去重
+        6 : 对数据集每张图片求 md5 , 也可以删除重复的数据集（由于删除数据的图片，重新生成 trainval test 文件）
             --vocpath,require
             --deleteSameMd5Flag # 0 : not delete ,just get md5 , 1 : delete Sama md5 xml and image
+        7 : 对所有的图片，cv2 imread , 然后保存 为 jpg 格式
+            --vocpath,require
 """
 changeLog = \
 """
@@ -134,6 +136,12 @@ def main():
             return -1
         labelx2xml_helper.getAllImageMD5Fun(
             vocPath=args.vocpath, deleteFlag=args.deleteSameMd5Flag)
+    elif args.actionFlag == 7:
+        vocpath = args.vocpath
+        if vocpath == None:
+            print("vocpath is required")
+            return -1
+        labelx2xml_helper.reWriteImageWithCv2(vocPath=vocpath)
     pass
 
 if __name__ == '__main__':
