@@ -94,7 +94,7 @@ def md5_process(image=None,dataOrNameFlag=None):
     elif dataOrNameFlag == 2:
         imageData = readImage_fun(isUrlFlag=True, imagePath=image) 
         pass
-    if imageData == None:
+    if np.shape(imageData) == ():
         return (False, "imageData is None")
     hash_md5 = hashlib.md5()
     for chunk in iter(lambda: imageData.read(4096), b""):
