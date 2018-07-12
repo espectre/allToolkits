@@ -40,7 +40,8 @@ changeLog = \
         gen_imagesets : bbox info add to readme.txt
         add utils file ,the file is common used function
     2018-07-10:
-        add actionFlag 6 : image md5 check
+        add actionFlag 6 : image md5 check and delete same md5 image
+        add actionFlag 7 : cv2.imread image and cv2.imwrite image
 """
 
 def parse_args():
