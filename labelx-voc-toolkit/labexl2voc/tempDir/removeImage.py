@@ -91,7 +91,7 @@ def main():
     print("Image length : %d"%(len(deleteImageList)))
     get_8000_only_guns_true_list = random.sample(
         deleteImageList, 8000)
-    deleteImageFun(deleteImageList=deleteImageList)
+    deleteImageFun(deleteImageList=get_8000_only_guns_true_list)
 
 
 
