@@ -50,28 +50,33 @@ def doubleOrNotLine(line=None):
 
 
 def doubleListFileFun(file=None):
-    iamgeList = []
+    imageList = []
     with open(file,'r') as f:
         for line in f.readlines():
-            if not line.strip():
+            line = line.strip()
+            if not line:
                 continue
-            iamgeList.append(line)  # orignal image
+            imageList.append(line)  # orignal image
+    print(len(imageList))
     with open(file,'r') as f:
         for line in f.readlines():
-            if not line.strip():
+            line = line.strip()
+            if not line:
                 continue
             res = doubleOrNotLine(line=line)
             if res == True:
-                iamgeList.append(line)
-    random.shuffle(iamgeList)
+                imageList.append(line)
+    print(len(imageList))
+    random.shuffle(imageList)
     with open(file,'w') as f:
-        f.write('\n'.join(iamgeList))
+        f.write('\n'.join(imageList))
 
 vocPath = ""
 def main():
     for i in ['trainval.txt']:
         file = os.path.join(vocPath, 'ImageSets/Main',i)
         shutil.copyfile(file,file+'.original')
+        doubleListFileFun(file=file)
 
     pass
 
