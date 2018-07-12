@@ -3,6 +3,7 @@ import os
 import sys
 import json
 from lxml import etree
+import random
 """
 这个函数的作用是 ：去除一些不想要的图片
 """
@@ -51,13 +52,35 @@ def checkXmlSaveOrDelete(imageNameNoPostfix=None,deleteFlag=False):
     pass
 
 
+def deleteImageFun(deleteImageList=None):
+    vocAnno = os.path.join(saveOnlyGunsTrueVocPath, 'Annotations')
+    vocJpeg = os.path.join(saveOnlyGunsTrueVocPath, 'JPEGImages')
+    if not os.path.exists(vocAnno):
+        os.makedirs(vocAnno)
+    if not os.path.exists(vocJpeg):
+        os.makedirs(vocJpeg)
+    for index,i in enumerate(deleteImageList):
+        if index % 1000 == 0:
+            print("processing : %d"%(index))
+        xml = os.path.join(xmlBasePath,i+'.xml')
+        newXml = os.path.join(vocAnno, i+'.xml')
+        image = os.path.join(imageBasePath,i+'.jpg')
+        newImage = os.path.join(vocJpeg, i+'.jpg')
+        cmdStr = "mv %s %s"%(xml,newXml)
+        os.system(cmdStr)
+        cmdStr = "mv %s %s"%(image,newImage)
+        os.system(cmdStr)
+        pass
+    pass
+
 vocPath = ""
+saveOnlyGunsTrueVocPath = "/workspace/data/BK/terror-dataSet-Dir/generate_V1.1.2/TERROR-DETECT-temp-0712-only-guns-true"
 xmlBasePath = os.path.join(vocPath, 'Annotations')
 imageBasePath = os.path.join(vocPath, 'JPEGImages')
 def main():  
     allImageJustNameNoPostfixFileList = [] 
     for i in os.listdir(imageBasePath):
-        imageNoPostfix = i.split('.')[-1]
+        imageNoPostfix = i.split('.')[0]
         allImageJustNameNoPostfixFileList.append(imageNoPostfix)
     deleteImageList = [] # just image name no postfix
     for i in range(len(allImageJustNameNoPostfixFileList)):
@@ -65,7 +88,11 @@ def main():
         res = checkXmlSaveOrDelete(imageNameNoPostfix=imageName)
         if res:
             deleteImageList.append(imageName)
-    print(len(deleteImageList))
+    print("Image length : %d"%(len(deleteImageList)))
+    get_8000_only_guns_true_list = random.sample(
+        deleteImageList, 8000)
+    deleteImageFun(deleteImageList=deleteImageList)
+
 
 
 if __name__ == '__main__':
