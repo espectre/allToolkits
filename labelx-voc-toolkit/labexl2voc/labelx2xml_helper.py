@@ -295,7 +295,7 @@ def reWriteImageWithCv2(vocPath=None):
     for i in range(len(allImageList)):
         imageNamePath = allImageList[i]
         res = image_helper.cv2ImreadAndWrite(
-            oldImageNamePath=i, newImageNamePath=i)
+            oldImageNamePath=imageNamePath, newImageNamePath=imageNamePath)
         if not res : # error
             exit
         if (i+1) % 1000 == 0:
