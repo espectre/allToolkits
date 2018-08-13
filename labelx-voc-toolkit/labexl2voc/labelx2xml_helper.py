@@ -284,7 +284,9 @@ def getAllImageMD5Fun(vocPath=None,deleteFlag=False):
                         deleteFile = imaeg_name.split('/')[-1].split('.')[0]
                         deleteFileList.append(deleteFile)
     if deleteFlag and len(deleteFileList) > 0:  # 由于删除了文件，需要重新生成 ImageSets/Main
-        gen_imagesets.gen_imagesets(vocpath=vocPath)
+        # gen_imagesets.gen_imagesets(vocpath=vocPath)
+        # 保持原来的 trainval test 文件不变，把已经删除的文件，从 trainval test 中去除掉
+        gen_imagesets.recreateTrainvalTestFile(vocPath=vocPath)
         
     
 def reWriteImageWithCv2(vocPath=None):

@@ -246,3 +246,29 @@ def getAllImageMd5(imageList=None):
         md5_dict[md5].append(imageName)
     return md5_dict
         
+
+def recreateTrainvalTestFile(vocPath=None):
+    """
+        trainval test 文件已经存在，但 image xml 文件由于 md5 去重
+        所以 重新生成 trainval test 文件
+    """
+    fileList = ['trainval.txt','test.txt']
+    for i_file in fileList:
+        file_path = os.path.join(vocPath, 'ImageSets/Main',i_file)
+        oldFileNameList = []
+        with open(file_path,'r') as f:
+            oldFileNameList = f.readlines()
+        oldFileNameList = [i.strip() for i in oldFileNameList]
+        newFileNameList = []
+        for i_image in oldFileNameList:
+            image_file_path = os.path.join(vocPath, 'JPEGImages',i_image+'.jpg')
+            xml_file_path = os.path.join(vocPath, 'Annotations',i_image+'.xml')
+            if (not os.path.exists(image_file_path)) or (not os.path.join(xml_file_path)) :
+                print("%s already delete jpg or xml file"%(i_image))
+            else:
+                newFileNameList.append(i_image)
+        with open(file_path,'w') as f:
+            for i_image in newFileNameList:
+                f.write(i_image+'\n')
+                f.flush()
+    pass
