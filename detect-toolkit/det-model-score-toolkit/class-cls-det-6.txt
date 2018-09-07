@@ -1,0 +1,7 @@
+{"class": "bloodiness","index":1,"flag":1}
+{"class": "fire", "index": 2,"flag":1}
+{"class": "banner", "index": 3,"flag":1}
+{"class": "crowed", "index": 4,"flag":1}
+{"class": "smoke", "index": 5,"flag":1}
+{"class": "vehicle_explosion", "index": 6,"flag":1}
+{"class": "not terror", "index": 7,"flag":0}
