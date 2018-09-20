@@ -143,6 +143,13 @@ def mergePascalDataset(littlePath=None, finalPath=None):
                             final_bboxInfo_dict[i_key][i_i_key] += little_bboxInfo_dict[i_key][i_i_key]
                         else:
                             final_bboxInfo_dict[i_key][i_i_key] += 0
+        # add bbox in little dataset and not in final dataset
+        for i_key in little_bboxInfo_dict.keys():
+            if isinstance(little_bboxInfo_dict[i_key], dict):
+                for i_i_key in little_bboxInfo_dict[i_key].keys():
+                    if isinstance(little_bboxInfo_dict[i_key][i_i_key], int):
+                        if i_i_key not in final_bboxInfo_dict[i_key]:
+                            final_bboxInfo_dict[i_key][i_i_key] = little_bboxInfo_dict[i_key][i_i_key]
         with open(final_readme_file,'w') as f:
             json.dump(final_readme_file_dict, f, indent=4)
     pass
