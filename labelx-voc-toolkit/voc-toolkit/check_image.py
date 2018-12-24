@@ -26,7 +26,7 @@ def readImage_fun(isUrlFlag=None, imagePath=None):
         finally:
             return im
     else:
-        im = cv2.imread(imagePath, cv2.IMREAD_COLOR)
+        im = cv2.imread(imagePath, cv2.IMREAD_COLOR|cv2.IMREAD_IGNORE_ORIENTATION)
     if np.shape(im) == ():
         return None
     return im

@@ -1,0 +1,9 @@
+data: '2018-10-28'
+prefix: 'ad-'
+bucket: 'xspark-export-ad'
+qrsctlDoralogLoginPath: "/workspace/data/softwares/qrsctlDir/qrsctlLoginDoraLog.sh"
+qrsctlPath: "qrsctl"
+qshellDoralogLoginPath: "/workspace/data/softwares/qshellDir/qshellLoginDoraLog.sh"
+qshellPath: "qshell"
+
+

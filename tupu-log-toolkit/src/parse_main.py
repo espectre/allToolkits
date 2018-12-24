@@ -98,10 +98,13 @@ def parseFile(file=None):
     if not os.path.exists(saveLogPath):
         os.makedirs(saveLogPath)
     copyfile(res_file, os.path.join(saveLogPath, os.path.basename(res_file)))
-    saveIamgePath = '../saveImageDir'
-    if not os.path.exists(saveIamgePath):
-        os.makedirs(saveIamgePath)
-    downloadImageByResFile(file=res_file, imagePath=saveIamgePath)
+    saveImagePath = '../saveImageDir'
+    if not os.path.exists(saveImagePath):
+        os.makedirs(saveImagePath)
+    saveImagePath_date = os.path.join(saveImagePath,CONFIG['data'])
+    if not os.path.exists(saveImagePath_date):
+        os.makedirs(saveImagePath_date)
+    downloadImageByResFile(file=res_file, imagePath=saveImagePath_date)
 
 
 def initConfig():

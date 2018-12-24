@@ -219,7 +219,7 @@ def drawImageWithBbox(absoluteImagePath=None, absoluteXmlFilePath=None, savePath
             pass
         pass
     color_black = (0, 0, 0)
-    im = cv2.imread(absoluteImagePath)
+    im = cv2.imread(absoluteImagePath,cv2.IMREAD_COLOR|cv2.IMREAD_IGNORE_ORIENTATION)
     for object in object_list:
         color = (random.randint(0, 256), random.randint(
             0, 256), random.randint(0, 256))

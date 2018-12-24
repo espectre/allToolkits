@@ -86,6 +86,8 @@ class cons_worker(threading.Thread):
     def download(self, url, output_path):
         err_flag = 0
         url_json = json.loads(url)
+        if 'label' not in url_json:
+            return
         output_path = os.path.join(output_path,str(url_json['label']))
         if not os.path.exists(output_path):
             GLOBAL_LOCK.acquire()
@@ -104,10 +106,18 @@ class cons_worker(threading.Thread):
         except all as e:
             err_flag = 1
         if err_flag == 0:
+            if os.path.exists(image_save_path) and (not  os.path.getsize(image_save_path)):
+                os.remove(image_save_path)
+                return 0
             cv2ImreadAndWrite(oldImageNamePath=image_save_path,
                               newImageNamePath=os.path.join(
                                   output_path, url_json['newImageName']))
             os.remove(image_save_path)
+            if not os.path.getsize(os.path.join(output_path,url_json['newImageName'])):
+                os.remove(os.path.join(output_path,url_json['newImageName']))
+        #else:
+        #    os.remove(image_save_path)
+
         return err_flag
 
     def run(self):

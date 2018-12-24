@@ -76,7 +76,7 @@ def appendSizeText(root=None, imagePath=None):
     # img = Image.open(imagePath)
     img = None
     try:
-        img = cv2.imread(imagePath)
+        img = cv2.imread(imagePath,cv2.IMREAD_COLOR|cv2.IMREAD_IGNORE_ORIENTATION)
     except:
         img = None
     if np.shape(img) == ():

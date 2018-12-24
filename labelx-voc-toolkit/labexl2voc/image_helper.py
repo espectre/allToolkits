@@ -166,7 +166,7 @@ class cons_worker(threading.Thread):
 
 def cv2ImreadAndWrite(oldImageNamePath=None,newImageNamePath=None):
     try:
-        im = cv2.imread(oldImageNamePath, cv2.IMREAD_COLOR)
+        im = cv2.imread(oldImageNamePath, cv2.IMREAD_COLOR|cv2.IMREAD_IGNORE_ORIENTATION)
         cv2.imwrite(newImageNamePath, im)
         return True
     except :
