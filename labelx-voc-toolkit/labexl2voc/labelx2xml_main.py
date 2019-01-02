@@ -22,6 +22,9 @@ helpInfoStr = \
             将 vocpath 指向的数据集 添加到 finalVocpath 这个数据集中
         3 : 根据已经有的图片和xmL文件生成 ImageSets/Main，readme.txt
             --vocpath ,required 
+            --recreateImageSetFlag , optional
+                  0:not create ImageSet/Main ,just get readme file , 
+                  1: create ImageSet/Main and readme file
         4 : 统计vopath bbox 的类别信息
             --vocpath ,required 
         5 : 抽样画图，抽样画 pascal voc 格式的数据
