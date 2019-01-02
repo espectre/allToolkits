@@ -10,6 +10,7 @@ merge_config = {
     # value : new class name
     "tibetan flag":"tibetan_flag",
     "islamic flag":"islamic_flag",
+    "isis flag":"isis_flag",
     "guoqi_flag":"china_guoqi_flag",
     "bairiqi_flag":"taiwan_bairiqi_flag",
     "guns_true":"guns_true",
@@ -34,11 +35,15 @@ merge_config = {
 
 def change_readme(readmeFile):
     readmeDict = json.load(open(readmeFile,'r'))
-    for key in readmeDict['bboxInfo']:
-        for bbox_name in readmeDict['bboxInfo'][key]:
+    for key in readmeDict['bboxInfo']: # test or trainval
+        for bbox_name in readmeDict['bboxInfo'][key].keys():
             if bbox_name in merge_config:
                 new_bbox_name = merge_config[bbox_name]
                 readmeDict['bboxInfo'][key][new_bbox_name] = readmeDict['bboxInfo'][key][bbox_name]
+                if new_bbox_name != bbox_name:
+                    del readmeDict['bboxInfo'][key][bbox_name]
+            else:
+                print("%s not in merge_config !!!"%(bbox_name))
     with open(readmeFile+"_new",'w') as f:
         json.dump(readmeDict, f, indent=4)
 
