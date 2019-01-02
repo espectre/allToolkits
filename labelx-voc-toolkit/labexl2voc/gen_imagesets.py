@@ -14,7 +14,7 @@ import image_helper
 '''
 设置trainval和test数据集包含的图片
 '''
-def gen_imagesets(vocpath=None,recreateImageSetFlag=True):
+def gen_imagesets(vocpath=None,recreateImageSetFlag=False):
     # ImageSets文件夹
     _IMAGE_SETS_PATH = join(vocpath, 'ImageSets')
     _MAin_PATH = join(vocpath, 'ImageSets/Main')

@@ -79,6 +79,11 @@ def parse_args():
                         default=0,
                         help='0:just get all md5 , 1: delete same md5 image',
                         type=int)
+    parser.add_argument('--recreateImageSetFlag',
+                        dest='recreateImageSetFlag',
+                        default=0,
+                        help='0:not create ImageSet/Main ,just get readme file , 1: create ImageSet/Main and readme file',
+                        type=int)
     args = parser.parse_args()
     return args
 
@@ -112,10 +117,14 @@ def main():
         pass
     elif args.actionFlag == 3:
         vocpath = args.vocpath
+        recreateImageSetFlag = args.recreateImageSetFlag
         if vocpath == None:
             print("vocpath is required")
             return -1
-        labelx2xml_helper.gen_imageset_Fun(vocPath=vocpath)
+        if recreateImageSetFlag == 0:
+            labelx2xml_helper.gen_imageset_Fun(vocPath=vocpath,recreateImageSetFlag=False)
+        elif recreateImageSetFlag == 1:
+            labelx2xml_helper.gen_imageset_Fun(vocPath=vocpath,recreateImageSetFlag=True)
         pass
     elif args.actionFlag == 4:
         vocpath = args.vocpath

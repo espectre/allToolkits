@@ -159,8 +159,8 @@ def getTimeFlag():
     return time.strftime("%Y-%m-%d-%H-%M-%s", time.localtime())
 
 # 根据 图片 和 xml 文件 生成 Main 目录下的 trainval.txt  test.txt
-def gen_imageset_Fun(vocPath=None):
-    gen_imagesets.gen_imagesets(vocpath=vocPath)
+def gen_imageset_Fun(vocPath=None,recreateImageSetFlag=False):
+    gen_imagesets.gen_imagesets(vocpath=vocPath,recreateImageSetFlag=recreateImageSetFlag)
     pass
 
 # 统计数据集中的bbox的信息
