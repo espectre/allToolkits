@@ -324,3 +324,9 @@ def main():
 
 if __name__ == '__main__':
     main()
+   
+"""
+xml file format tools
+apt-get install xmlstarlet
+xmlstarlet format old.xml > new.xml
+"""
