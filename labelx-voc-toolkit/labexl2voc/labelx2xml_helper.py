@@ -31,7 +31,8 @@ def process_labelx_jsonFile_Fun(json_file_absolutePath=None, tempSaveDir=None, v
         resInfo = "rename pascal image error"
         return (False, resInfo)
     # 这个是生成 pascal voc 格式的数据集 xml  jpg txt
-    gen_imagesets.gen_imagesets(vocpath=vocpath)
+    gen_imagesets.gen_imagesets(vocpath=vocpath,recreateImageSetFlag=True)
+#     gen_imagesets.gen_imagesets(vocpath=vocpath)
     pass
 
 
